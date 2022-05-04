@@ -1,0 +1,98 @@
+
+.Login-Window {
+    height: 100vh;
+    width: 100vw;
+    background: linear-gradient(to bottom, #32584F 48%, white 10%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.Login-Box {
+    /* border: 4px solid #32584F; */
+    filter: drop-shadow(1px 1px 4px #535353);
+    border-radius: 10px;
+    background-color: white;
+    width: 400px;
+    height: 600px;
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.Login-Image-Text {
+    width: 60%;
+    padding-top: 20px;
+}
+
+.Login-Image {
+    width: 40%;
+}
+
+.Input-Box {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    width: 80%;
+    margin-top:25px
+}
+
+.Input-Label {
+    padding-bottom: 5px;
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    color: rgb(80, 80, 80); 
+}
+
+.Input-Field {
+    height: 35px;
+    
+}
+
+.Checkbox-Box {
+    width: 80%;
+    margin-top: 20px;
+    display: flex;
+    flex-direction: row;
+}
+
+.Checkbox-Input {
+    width: 20px;
+}
+
+.Login-button {
+    width: 80%;
+    cursor:pointer;
+    background:#32584F; 
+    color: white; 
+    font-size: 20px;
+    text-transform: uppercase;
+    padding: 11px;
+    margin: 25px;
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+.Login-button:hover {
+    filter: brightness(1.2);
+}
+
+.Forgot-Password-Message {
+    width:70%;
+    font-size: 14px;
+    color: red;
+}
+
+.Forgot-Password-Button {
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif ;
+    color: gray; 
+    font-size: 14px;;
+    text-decoration: underline;
+}
+
+.Forgot-Password-Button:hover {
+    cursor: pointer;
+}
+
+.Login-In-Error-Message {
+    color: red;
+}

@@ -1,0 +1,95 @@
+.Header-Image {
+    width: 25vw;
+    pointer-events: none;
+    align-self: flex-start;
+    height: 100px;
+    margin-left: 13px;
+  }
+  
+.App-Header {
+  display: flex;
+  padding: 10px 10px 0%;
+  height: 100px;
+}
+
+.Header-Controls {
+  margin-right: 25px;
+  flex-grow: 9;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.User-Panel-Header {
+  margin-left: 40px;
+}
+
+.User-Panel-Header:hover {
+  cursor: pointer;
+}
+
+.User-Drop-Down-Background {
+  position:absolute;
+  top:0px;
+  right:0px;
+  bottom:0px;
+  left:0px;
+  position: absolute;
+  width: 100%;
+  height: 100vh;
+}
+
+
+.User-Drop-Down-Menu {
+  position: absolute;
+  top: 90px;
+  width: 200px;
+  height: 65px;
+  background: white;
+  border: 2px solid #32584F;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.Drop-Down-Text {
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.Drop-Down-Text:hover {
+  cursor: pointer;
+}
+
+.User-Drop-Down-Button:hover {
+  cursor: pointer;
+}
+
+.Drop-Down-Icon {
+  font-size: 18px;
+  margin-right: 20px;
+}
+
+.User-Drop-Down-Button {
+  height:40px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.User-Drop-Close-Button {
+  align-self: flex-end;
+  position: fixed;
+  height:35px;
+  width: 40px;
+  border-radius: 6px;
+  font-size: 24px;
+  color:#32584F;
+  
+}
+
+.User-Drop-Close-Button:hover {
+  cursor: pointer;
+}

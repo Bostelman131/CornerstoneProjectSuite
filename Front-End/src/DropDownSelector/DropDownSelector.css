@@ -1,0 +1,29 @@
+.Drop_Down_Selector_Window {
+    display: flex;
+    flex-direction: column;
+    text-align: start;
+    width:100%;
+    max-height: 150px;
+    overflow-y: scroll;
+}
+
+.Drop_Down_Input {
+    font-size: 20px;
+    background-color: white;
+    color: black;
+    border-bottom: 1px solid lightgray;
+}
+
+.Drop_Down_Input:hover {
+    background-color: lightgray;
+    cursor: pointer;
+}
+
+.Drop_Down_Selected {
+    border: 2px solid black;
+    border-radius: 4px;
+}
+
+.Drop_Down_Symbol_Down {
+    align-self: flex-end;
+}

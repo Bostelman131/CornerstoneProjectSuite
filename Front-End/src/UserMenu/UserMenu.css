@@ -1,0 +1,113 @@
+.User-Menu-Background {
+    background-color: rgba(0, 0, 0, 0.7);
+    width: 100vw;
+    height:100vh;
+    position: absolute;
+    top:0;
+    left:0;
+    overflow-y: hidden;
+    overflow-x: hidden;
+}
+
+.User-Menu {
+    position: absolute;
+    background-color: white;
+    height: 100vh;
+    top: 0;
+    right:0;
+    width: var(--menuWidth);
+    overflow-y: hidden;
+    overflow-x: hidden;
+}
+
+.User-Menu.active {
+
+}
+
+.UM-Top-Container {
+    background-color: #32584F;
+    height: 15%;
+    display: flex;
+    flex-direction: row;
+    border-bottom: 1px solid black;
+    min-height: 140px;
+    transition: 850ms;
+}
+
+.UM-Greeting-Section {
+    flex-grow: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-end;
+    margin-left: 40px;
+    padding-bottom: 20px;
+}
+
+.UM-Greeting-Header {
+    color: white;
+    margin: 0;
+}
+
+.UM-Name {
+    font-size: 24px;
+}
+
+.UM-Pic-Section {
+    flex-grow: 1;
+    margin: auto;
+}
+
+.User-Menu-Image {
+    border-radius:50%;
+    max-height: 100%;
+    max-height: var(--maxHeight);
+    border: 2px solid white;
+}
+
+.User-Menu-Image:hover {
+    cursor: pointer;
+    max-height: calc(var(--maxHeight)*1.1);
+}
+
+
+.UM-Middle-Container {
+    display: flex;
+    align-items: flex-start;
+    text-align: start;
+    flex-direction: column;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    height: 85%;
+}
+
+
+.UM-Mid-Section {
+    border-bottom: 4px solid lightgray;
+    width: calc(var(--menuWidth)*.9);
+    padding: 10px 40px 40px;
+    display: flex;
+    flex-direction: column;
+}
+
+.UM-Category-Header {
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Verdana, sans-serif;
+    width: 250px;
+    border-bottom: 2px solid lightgray;
+    color: darkslategray;
+}
+
+.UM-Link-Container {
+    font-size: 20px;
+    margin: 10px 10px;
+    font-weight: 400;
+}
+
+.UM-Link:hover {
+    cursor: pointer;
+    color:#32584F;
+}
+
+.UM-App-Section {
+    border: none;
+}

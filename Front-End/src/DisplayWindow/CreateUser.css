@@ -1,0 +1,9 @@
+.User-Successful {
+    color: green;
+    font-weight: 800;
+}
+
+.User-Failure {
+    color: red;
+    font-weight: 600;
+}

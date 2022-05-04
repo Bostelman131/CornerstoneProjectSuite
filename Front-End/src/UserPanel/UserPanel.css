@@ -1,0 +1,59 @@
+.User-Panel{
+    display: flex;
+    max-width: 300px;
+    max-height: 100%;
+    height: var(--maxHeight);
+}
+
+.User-Panel-Image {
+    border-radius:50%;
+    max-width: var(--maxHeight);
+    max-height: var(--maxHeight);
+}
+
+.User-Panel-Text {
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+    padding-left: 5px;
+}
+
+.User-Panel-Username {
+    margin:0;
+}
+
+.User-Panel-Title {
+    margin: 0;
+}
+
+.Text-Primary {
+    font-size: var(--primaryFontSize);
+    font-weight: var(--fontWeight);
+}
+
+.Text-Secondary {
+    font-size: var(--secondaryFontSize);
+    font-weight: var(--fontWeight);
+}
+
+
+
+.User-Panel-Extend-enter {
+    opacity: 0;
+    /* transform: translateX(0%) ease-in; */
+}
+
+.User-Panel-Extend-enter-active {
+    opacity: 1;
+    transition: opacity 200ms;
+}
+
+.User-Panel-Extend-exit {
+    opacity: 1;
+    /* transform: translateX(-100%) ease-in; */
+}
+
+.User-Panel-Extend-exit-active {
+    opacity: 0;
+    transition: opacity 200ms;
+}

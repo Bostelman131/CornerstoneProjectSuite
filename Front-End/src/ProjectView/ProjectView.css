@@ -1,0 +1,364 @@
+div {
+  white-space: pre-wrap;
+}
+
+.Project-View-Background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+.Project-View-Window {
+    position: absolute;
+    width: 50vw;
+    height: 70vh;
+    margin-left: 25%;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 2px 2px 10px 2px #3d2929;
+}
+
+.PV-Header {
+    display: flex;
+    flex-direction: row;
+    background-color: #32584F;
+    height: 180px;
+    width: 100%;
+    color: white;
+}
+
+.PV-Header-Label-Container {
+    display: flex;
+    flex-direction: column;
+    height: 170px;
+    align-items: flex-start;
+    justify-content: flex-end;
+    padding-left: 40px;
+    width: 70%;
+}
+
+.PV-Header-Label {
+  font-size: var(--fontSize);
+}
+
+.PV-Scroll-Window {
+  height: 100%;
+  width: 100%;
+  overflow-y: scroll;
+}
+
+.PV-Primary-Window {
+  display: flex;
+  flex-direction: row;
+  padding: 20px 40px;
+  min-height: 87%;
+}
+
+.PV-Primary-Left-Window {
+  display: flex;
+  flex-direction: column;
+  width: 40%;
+}
+
+
+.PV-Primary-Right-Window {
+  min-height: 400px;
+  width: 60%;
+}
+
+.PV-Summary-Left {
+  width: 100%;
+  text-align: start;
+}
+
+
+
+.PV-Summary-Right {
+  width: 49%;
+
+}
+
+.PV-Summary-Date, .PV-Summary-Sage {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-top: 20px;
+  font-size: 15px;
+  font-weight: 400;
+}
+
+.PV-Project-Date, .PV-Project-Sage{
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.PV-Summary-CityState {
+  display: flex;
+  flex-direction: row;
+}
+
+.Dynamic-Text {
+    color: white;
+    font-size: var(--fontSize);
+  }
+  
+.Div-Input {
+  background: transparent;
+  width: var(--inputWidth);
+}
+
+.Div-Label {
+  font-size: var(--labelFontSize);
+}
+
+.Button-Group {
+  display:flex;
+  flex-direction: row;
+  margin-top:20px;
+  margin-right: 40px;
+  justify-content: flex-end;
+}
+
+.Edit-Button {
+  font-size: 15px;
+  padding: 2px 10px;
+}
+
+.Edit-Button:hover {
+  cursor: pointer;
+}
+
+.PV-Link-Container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width:100%;
+  gap: 5px;
+  margin-top: 20px;
+}
+
+.PV-Archived-Container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  text-align: start;
+}
+
+.PV-Archived-Checkbox {
+  margin-bottom: 30px;
+}
+
+.PV-Archived-Path {
+  margin-bottom: 30px;
+}
+
+.PV-Link-Header {
+  width: 100%;
+  text-align: start;
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.PV-Link-Base {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.PV-Link {
+  font-size: 14px;
+  border: 2px solid #32584F;
+  padding: 5px;
+  border-radius: 10px;
+  min-width: 100px;
+}
+.PV-Link:hover {
+  cursor: pointer;
+  background-color: #32584F;
+  color: white;
+}
+
+.PV-Header-UserPanel {
+  width: 30%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  padding-right: 60px;
+  margin-bottom: 10px;
+}
+
+.PV-Med-Dynamic {
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.PV-Narrative-Container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  margin-right: 40px;
+  margin-left: 20px;
+  height: 40vh;
+}
+
+.PV-Narrative-Header {
+  font-size: 16px;
+  font-weight: 600;
+
+}
+
+.PV-Reassign-Primary {
+  width:100%;
+  height:300px;
+}
+
+.PV-Inner-Header {
+  border-bottom:4px solid #32584F;
+  text-align: start;
+  padding-left: 40px;
+
+}
+
+.PV-Header-Title {
+  font-size: 28px;
+  font-weight: 600;
+  color:#32584F;
+}
+
+.PV-Sales-Window {
+  width: 100%;
+}
+
+.PV-Sales-Primary {
+  display: flex;
+  flex-direction: row;
+  padding: 20px 40px;
+}
+
+.PVS-Left {
+  width: 49%;
+  text-align: start;
+}
+
+.PVS-Number {
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.PVS-Number:hover {
+  cursor: pointer;
+  color:#32584F;
+  font-size: 25px;
+}
+
+.PVS-Contact-Container {
+  display: flex;
+  flex-direction: column;
+  margin-top: 20px;
+  width:100%;
+}
+
+.PVS-Name-Container {
+  display: flex;
+  flex-direction: row;
+  width:100%;
+}
+
+.PVS-Detail-Container {
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+}
+
+.PVS-Text-Primary {
+  font-size: 22px;
+  font-weight: 500;
+}
+
+.PVS-Text-Secondary {
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.PVS-Right {
+  display: flex;
+  width: 49%;
+  justify-content: flex-end;
+}
+
+.PV-Submit-Message {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--submitColor)
+}
+
+.PV-Projects-Window {
+  margin-bottom: 150px;
+}
+
+.PVS-Assigned-Project-Container {
+  display: flex;
+  flex-direction: row;
+  text-align: start;
+  margin:  15px 40px;
+  align-items: flex-end;
+}
+
+.PV-Convert-Project-Window {
+  width: 100%;
+  height: 55vh;
+}
+
+.PV-Convert-Form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.PV-Convert-Directions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.PV-Convert-Directions-Title {
+  margin-top: 10px;
+  font-size: 20px;
+  font-weight: 500;
+  color:#32584F;
+  text-decoration: underline;
+}
+
+.PV-Convert-Directions-Text {
+  width:70%;
+}
+
+.PV-Convert-Input {
+  width: 70%;
+  font-size: 18px;
+  padding: 10px;
+  margin: 2px;
+}
+
+.PV-Convert-Message {
+  font-weight: 600;
+  color: var(--cpSubmitColor);
+}
+
+.PV-Convert-Button {
+  background-color: #32584F;
+  color: white;
+  font-size: 18px;
+  padding: 5px;
+  margin-top: 10px;
+  width: 20%;
+}
+
+.PV-Convert-Button:hover {
+  background-color: #45796d;
+  cursor: pointer;
+}

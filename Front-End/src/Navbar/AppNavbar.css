@@ -1,0 +1,7 @@
+.App-Navbar {
+    margin: 0px 0px 10px 20px;
+    border-radius: 7px;
+    border: 5px solid #32584F;
+    padding-top: 25px;
+    overflow-y: scroll;
+}

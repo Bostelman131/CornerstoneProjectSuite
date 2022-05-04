@@ -1,0 +1,101 @@
+
+
+.Search-Bar-Window {
+    max-width: 350px;
+}
+
+.Search-Bar {
+    display: flex;
+    align-items: center;
+}
+
+.Search-Bar-Input {
+    width: 25vw;
+    max-width: 250px;
+    height:34px;
+    margin-right: 4px;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.Search-Bar-Button {
+    height:34px;
+    width: 34px;
+    margin-right: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #32584F;
+    border-radius: 6px;
+    color:#32584F;
+}
+
+.Search-Bar-Button:hover {
+    cursor: pointer;
+    background-color: #32584F;
+    color: white;
+}
+
+.Search-Bar-Button-Symbol {
+    height: 100%;
+    font-size: 15px;
+}
+
+.Search-Bar-Drop-Background {
+    position:absolute;
+    top:0px;
+    right:0px;
+    bottom:0px;
+    left:0px;
+    position: absolute;
+    width: 100%;
+    height: 100vh;
+}
+
+.Search-Bar-Drop-Window {
+    top: 40px;
+    position: fixed;
+    width: 300px;
+    /* height:410px; */
+    overflow: hidden;
+    background-color: white;
+    border: 2px solid #32584F;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.Drop-Down-Close-Button {
+    align-self: flex-end;
+    position: fixed;
+    height:35px;
+    width: 40px;
+    border-radius: 6px;
+    
+}
+
+.Close-Search-Button {
+    color:#32584F;
+}
+
+.Close-Search-Button:hover {
+    cursor: pointer;
+    filter: brightness(1.2);
+    transform: translateY(-10%);
+}
+
+.Show-All-Button {
+    background-color: #32584F;
+    color: white;
+    padding: 5px;
+    font-size: 16px;
+    width: 80%;
+    margin: 20px 0px;
+    align-self: center;
+}
+
+.Show-All-Button:hover {
+    cursor: pointer;
+    filter:brightness(1.2) ;
+}

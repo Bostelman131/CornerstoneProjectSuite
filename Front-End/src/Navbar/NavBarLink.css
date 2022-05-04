@@ -1,0 +1,27 @@
+.Navbar-Link {
+    margin: 10px 15px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #32584F;
+    border-radius: 7px;
+    background-color: var(--backgroundColor);
+    box-shadow: var(--boxShadow);
+    height: 50px;
+}
+
+.Navbar-Link:hover {
+    cursor: pointer;
+    filter: brightness(1.3);
+}
+
+.Navbar-Link-Icon {
+    color: var(--textColor);
+}
+
+.Navbar-Link-Title {
+    color: var(--textColor);
+    margin: var(--selectedMargin);
+}
+

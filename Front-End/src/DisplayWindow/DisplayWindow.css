@@ -1,0 +1,6 @@
+.Display-Window {
+    margin: 0px 20px 10px;
+    border-radius: 7px;
+    border: 5px solid #32584F;
+    overflow-y: scroll;
+}

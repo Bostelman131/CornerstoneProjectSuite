@@ -1,0 +1,13 @@
+.Drop-Down-Label {
+    margin-left: 10px;
+    font-weight: 500;
+    margin-top: 10px;
+    font-size: 16px;
+}
+
+.Drop-Down-Search {
+    width: 90%;
+    margin-left: 10px;
+    font-size: 14px;
+    padding: 5px;
+}

@@ -1,0 +1,30 @@
+.Edit-Tag-Container {
+    width: var(--containterWidth);
+    height: var(--containterHeight);
+    color: var(--color);
+    font-weight: var(--fontWeight);
+    text-align: start;
+}
+
+.Dynamic-Text {
+    font-size: var(--fontSize);
+    color: var(--color);
+}
+
+.Dynamic-Textarea {
+    font-size: var(--fontSize);
+    height: 100%;
+    resize: none;
+    width: 100%;
+    color: var(--color);
+    overflow-y: scroll;
+}
+
+
+.Edit-Input {
+    background: transparent;
+    width: var(--inputWidth);
+    height: var(--fontSize);
+    padding: 0;
+    color: var(--color);
+}

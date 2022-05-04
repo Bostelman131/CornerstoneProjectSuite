@@ -1,0 +1,84 @@
+.AM-Background {
+    position: absolute;
+    top: 0;
+    height: 100vh;
+    width: var(--menuWidth);
+    right: 0;
+}
+
+
+.AM-Window {
+    background-color: white;
+    border: 2px solid lightgray;
+    min-height: 250px;
+    width: 500px;
+    position: fixed;
+    top: 417px;
+    right: var(--menuWidth);
+    padding-bottom: 20px;
+    
+    display:flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding-left: 25px;
+    text-align: start;
+}
+
+.AM-Category-Header {
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Verdana, sans-serif;
+    width: 300px;
+    font-size: 20px;
+    border-bottom: 2px solid lightgray;
+    color: darkslategray;
+}
+
+.AM-Outer-Container {
+    width: 70%;
+}
+
+.AM-Inner-Container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin: 20px 0px;
+}
+
+.AM-Label{
+    font-size: 17px;
+}
+
+.AM-Input{
+    height: var(--inputHeight);
+    width: 100%;
+    font-size: 15px;
+}
+
+.AM-text-Area {
+    resize:none;
+}
+
+.AM-Error-Message {
+    color: var(--AMMessageColor);
+}
+
+.AM-Button-Group {
+    margin-top: 10px;
+}
+
+.AM-Button {
+    padding: 5px;
+}
+
+.AM-Button:hover {
+    cursor: pointer;
+}
+
+.AM-Submit-Button{
+    background-color: #32584F;
+    color: white;
+    margin-left: 40px;
+}
+
+.AM-Submit-Button:hover {
+    background-color: #4b8175;
+}

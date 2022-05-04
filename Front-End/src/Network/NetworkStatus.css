@@ -1,0 +1,33 @@
+.ND-Window {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin: 25px;
+}
+
+.ND-Title {
+    margin: 2px;
+    text-decoration: underline;
+    font-size: 25px;
+    text-transform: uppercase;
+}
+
+.ND-IP {
+    margin: 2px;
+    font-size: 19px;
+}
+
+.ND-Status-Container {
+
+}
+
+.ND-Status-Text {
+    margin: 2px;
+    font-size: 19px;
+}
+
+.ND-Status-Data {
+    color: var(--statusColor);
+    font-size: 22px;
+    font-weight: 500;
+}
