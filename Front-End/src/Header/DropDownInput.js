@@ -1,7 +1,13 @@
 import './DropDownInput.css';
+import { useState } from 'react'
 
 
 const DropDownInput = ({ Label, currentText,  SearchBarText, filterFunction , select=false, options=null}) => {
+    const [ inputValue, setValue ] = useState("");
+
+    if(inputValue != currentText){
+        setValue(currentText);
+    }
 
     if(select){
         return (        
@@ -9,7 +15,7 @@ const DropDownInput = ({ Label, currentText,  SearchBarText, filterFunction , se
                 <label className='Drop-Down-Label'>
                 {Label}
                 </label>
-                    <select id="Drop-Down-Search-Type" className='Drop-Down-Search' onChange={ (e) => filterFunction(e.target.value)} >
+                    <select id="Drop-Down-Search-Type" className='Drop-Down-Search' defaultValue={inputValue} onChange={ (e) => filterFunction(e.target.value)} >
                         {
                             options.map((value,key) => {
                                 return(
@@ -32,6 +38,7 @@ const DropDownInput = ({ Label, currentText,  SearchBarText, filterFunction , se
                 className='Drop-Down-Search'
                 name="Input-Box"
                 type="text"
+                
                 placeholder={SearchBarText}
                 value={currentText}
                 onChange={(e) => filterFunction(e.target.value)}

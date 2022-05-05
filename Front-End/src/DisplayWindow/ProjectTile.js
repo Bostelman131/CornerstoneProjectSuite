@@ -7,7 +7,7 @@ function ProjectTile({ clientName, projectName, projectNumber, archived, project
     const status = "In Progress";
     if( archived ){
         const status = "Completed";
-    }
+    }    
 
     const statusColor = (status == 'Completed') ? 'green' : 'black';
 
@@ -39,8 +39,8 @@ function ProjectTile({ clientName, projectName, projectNumber, archived, project
 
     let UserPanelProps = {
         user:user,
-        maxHeight: 37,
-        primaryFontSize: 15,
+        maxHeight: 55,
+        primaryFontSize: 16,
         secondaryFontSize: 12,
         bold:false,
     }
@@ -48,9 +48,7 @@ function ProjectTile({ clientName, projectName, projectNumber, archived, project
     return(
         <div className='ProjectTile-Window'  onClick={handleProjectTileClick}>
             <div className='Project-Description-Box Hover-Pointer'>
-                <label className='Project-Description-Number Hover-Pointer'>
-                    {projectNumber}
-                </label>
+
                 <label className='Project-Description-Name Hover-Pointer'>
                     {clientName}
                 </label>
@@ -69,6 +67,9 @@ function ProjectTile({ clientName, projectName, projectNumber, archived, project
                     </label>
                 </div> */}
                 <div className='Project-Date-Box Hover-Pointer'>
+                    <label className='Project-Description-Number Hover-Pointer'>
+                        {projectNumber}
+                    </label>
                     <label className='Center-Box-Label Hover-Pointer'>
                         Creation Date:
                     </label>

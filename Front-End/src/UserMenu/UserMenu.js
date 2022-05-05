@@ -2,7 +2,7 @@ import './UserMenu.css';
 import { useState } from 'react';
 import AccountMenu from './AccountMenu/AccountMenu';
 
-const UserMenu = ({user, maxHeight, UserMenuWidth, toggleUserMenu, UMQuickLinks, UMSettingLinks, UMAppLink, token}) => {
+const UserMenu = ({user, maxHeight, UserMenuWidth, toggleUserMenu, UMQuickLinks, UMSettingLinks, UMAppLink, token, setActiveUserData}) => {
     let cssProps = { }
     cssProps['--maxHeight'] = maxHeight.toString()+"px";
     cssProps['--menuWidth'] = UserMenuWidth.toString()+"px";
@@ -21,20 +21,9 @@ const UserMenu = ({user, maxHeight, UserMenuWidth, toggleUserMenu, UMQuickLinks,
     const [ accountMenuToggle, setAccountMenu ] = useState(false);
     const [ accountObject, setAccountObject ] = useState(null);
 
-
-    const toggleAccountMenu = () => {
-        setAccountMenu(!accountMenuToggle);
-    }
-
     function handleAccountClick(object) {
         setAccountObject(object);
         setAccountMenu(true);
-    }
-
-    const handleUserMenuClick = (event) => {
-        if(accountMenuToggle == true ){
-            setAccountMenu(false);
-        }
     }
 
     return (
@@ -103,7 +92,7 @@ const UserMenu = ({user, maxHeight, UserMenuWidth, toggleUserMenu, UMQuickLinks,
                 )}
                 </div>
                 { accountMenuToggle &&
-                    <AccountMenu className='Account-Menu' user={user} token={token} accountObject={accountObject} setAccountMenu={setAccountMenu} UserMenuWidth={UserMenuWidth}/>
+                    <AccountMenu className='Account-Menu' user={user} token={token} accountObject={accountObject} setAccountMenu={setAccountMenu} UserMenuWidth={UserMenuWidth} setActiveUserData={setActiveUserData}/>
                 }
 
             </div>

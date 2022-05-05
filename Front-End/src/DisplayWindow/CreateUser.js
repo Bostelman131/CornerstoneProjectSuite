@@ -108,7 +108,7 @@ function CreateUser({createUserFormObject, user, token, createUserTextHeight, ho
                 </div>
             </div>
 
-            <div className='SalesOpp-Directions'>
+            <div className='Create-User-Directions'>
                 <label className='SD-Title'>
                     {createUserDirections["title"]}
                 </label>

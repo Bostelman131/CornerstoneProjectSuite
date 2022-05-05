@@ -79,12 +79,25 @@
     background-color: #4b8175;
 }
 
-
-.SalesOpp-Directions {
+.SalesOpp-Right-Panel-Window {
     margin-top: 25px;
     margin-left: 5%;
     width: 30%;
     height: 100%;
+}
+
+.SalesOpp-Directions {
+    width: 100%;
+}
+
+.SalesOpp-Upload-Window {
+    width: 100%;
+}
+
+.SalesOpp-Upload-Portal {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .SD-Title {
@@ -92,6 +105,7 @@
     font-weight: 500;
     color: #32584F;
     text-decoration: underline;
+    margin-bottom: 20px;
 }
 
 .SD-Primary {

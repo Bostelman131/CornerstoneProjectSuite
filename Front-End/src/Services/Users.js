@@ -25,6 +25,8 @@ class userDataService{
                 object['setError'](false);
                 object['setSuccess'](true);
                 object["messageFunction"]("Name Updated Successfully");
+                object['setActiveUserData'](object['id']);
+                object['close']();
             }
             else{
                 object['setSuccess'](false);
@@ -36,6 +38,7 @@ class userDataService{
     }
 
     updateContact(user, token, object){
+
         user.email = object["Email"];
         user.user_phone = object["Phone"];
 
@@ -45,6 +48,8 @@ class userDataService{
                 object['setError'](false);
                 object['setSuccess'](true);
                 object["messageFunction"]("Contact Information Updated Successfully");
+                object['setActiveUserData'](object['id']);
+                object['close']();
             }
             else{
                 object['setSuccess'](false);
@@ -65,6 +70,9 @@ class userDataService{
                 object['setError'](false);
                 object['setSuccess'](true);
                 object["messageFunction"]("Base URL Updated Successfully");
+                object['setActiveUserData'](object['id']);
+                object['close']();
+
             }
             else{
                 object['setSuccess'](false);
@@ -76,14 +84,19 @@ class userDataService{
     }
 
     updateProfile(user, token, object){
-        user.profile_picture = object["Profile Picture"];
+        let formData = new FormData();
+        formData.append('file', object["Profile Picture"]);
 
         axios.defaults.headers.common["Authorization"] = "token" + token;
-        axios.put(`${API_URL}account/${user.id}/`, user).then( response => {
+        axios.defaults.headers.common["Content-Type"] = object["Profile Picture"].type;
+        axios.put(`${API_URL}profilePicture/${user.id}/`,  formData ).then( response => {
             if(response.status == 200){
                 object['setError'](false);
                 object['setSuccess'](true);
                 object["messageFunction"]("Profile Picture Updated Successfully");
+                object['setActiveUserData'](object['id']);
+                object['close']();
+
             }
             else{
                 object['setSuccess'](false);
@@ -103,6 +116,8 @@ class userDataService{
                 object['setError'](false);
                 object['setSuccess'](true);
                 object["messageFunction"]("Bio Updated Successfully");
+                object['setActiveUserData'](object['id']);
+                object['close']();
             }
             else{
                 object['setSuccess'](false);
@@ -114,6 +129,7 @@ class userDataService{
     }
 
     changePassword(user, token, object){
+        const sleep = ms => new Promise(r => setTimeout(r, ms));
         if(object["Password"] == ""){
             object['setSuccess'](false);
             object['setError'](true);
@@ -144,6 +160,8 @@ class userDataService{
                 object['setError'](false);
                 object['setSuccess'](true);
                 object["messageFunction"]("Password Updated Successfully");
+                object['setActiveUserData'](object['id']);
+                object['close']();
             }
             else{
                 object['setSuccess'](false);

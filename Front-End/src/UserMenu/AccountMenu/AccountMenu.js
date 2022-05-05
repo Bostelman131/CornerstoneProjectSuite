@@ -1,7 +1,7 @@
 import './AccountMenu.css';
 import { useState } from 'react';
 
-const AccountMenu = ({user, accountObject, token, setAccountMenu, UserMenuWidth}) => {
+const AccountMenu = ({user, accountObject, token, setAccountMenu, UserMenuWidth, setActiveUserData}) => {
     const [  errorMessage, setErrorMessage ] = useState("");
     const [  messageTriggered, setMessageTriggered ] = useState(false);
     const [  error, setError ] = useState(false);
@@ -19,6 +19,13 @@ const AccountMenu = ({user, accountObject, token, setAccountMenu, UserMenuWidth}
         cssProps['--AMMessageColor'] = 'green';
     }
 
+    const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+    const delayedClose = () => {
+        sleep(1500).then( res => {
+            cancelRequest();
+        });
+    }
 
     function cancelRequest() {
         setAccountMenu(false);
@@ -34,12 +41,25 @@ const AccountMenu = ({user, accountObject, token, setAccountMenu, UserMenuWidth}
     accountObject['messageFunction'] = setErrorMessage;
     accountObject['setError'] = setError;
     accountObject['setSuccess'] = setSuccessful;
+    accountObject['setActiveUserData'] = setActiveUserData;
+    accountObject['id'] = user.id;
+    accountObject['close'] = delayedClose;
 
     if(errorMessage == "" && messageTriggered == true){
         setMessageTriggered(false);
     }
     if(errorMessage != "" && messageTriggered == false){
         setMessageTriggered(true);
+    }
+
+    const handleChange = (type, input, fieldName) => {
+        if(type === 'file'){
+            accountObject[fieldName] = input.target.files[0]
+        }
+        else{
+            accountObject[fieldName] = input.target.value
+        }
+
     }
 
     return (
@@ -74,7 +94,7 @@ const AccountMenu = ({user, accountObject, token, setAccountMenu, UserMenuWidth}
                             className='AM-Input'
                             type={accountObject["type"]}
                             placeholder={accountObject[fieldName]}
-                            onChange={e => accountObject[fieldName] = (e.target.value)}
+                            onChange={event => handleChange(accountObject["type"],event, fieldName)}
                             />
                         }
                         

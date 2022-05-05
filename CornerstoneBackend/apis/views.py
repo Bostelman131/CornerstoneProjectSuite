@@ -12,12 +12,12 @@ from rest_framework.parsers import JSONParser
 from rest_framework.authtoken.models import Token
 from django.views.decorators.csrf import csrf_exempt
 from datetime import date
-from rest_framework import serializers
+from django.views.generic.edit import CreateView
 
 from .models import Project,SalesOpp
 from accounts.models import Account
 from .serializers import ProjectSerializer, SalesSerializer, SalesPostSerializer
-from accounts.serializers import AccountSerializer, ChangePasswordSerializer
+from accounts.serializers import AccountSerializer, ChangePasswordSerializer, ChangeProfilePictureSerializer
 
 from apis.csd import create
 from apis.links import get_link_list
@@ -113,6 +113,13 @@ class DetailProject(generics.ListCreateAPIView):
         except:
             pass
 
+        try:
+            salesStatus = self.request.query_params.get('salesStatus')
+            if(salesStatus != None ):
+                projects = None
+        except:
+            pass
+
         return projects
 
 class SalesApiView(generics.ListAPIView):
@@ -189,6 +196,15 @@ class DetailSale(generics.ListCreateAPIView):
         except:
             pass
 
+        try:
+            salesStatus = self.request.query_params.get('salesStatus')
+            if(salesStatus == "Sent" ):
+                projects = projects.filter(submitted=True)
+            if(salesStatus == "Not Sent" ):
+                projects = projects.filter(submitted=False)
+        except:
+            pass
+
         return projects
 
 class PostSalesOpp(generics.CreateAPIView):
@@ -246,6 +262,29 @@ class ChangePassword(generics.UpdateAPIView):
 
         if serializer.is_valid():
             self.object.set_password(serializer.data.get("password"))
+            self.object.save()
+            response = {
+                'status': 'success',
+                'code': status.HTTP_200_OK,
+                'message': 'Password updated successfully',
+                'data': []
+            }
+            
+            return Response(response)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class UploadView(generics.UpdateAPIView):
+    serializer_class = ChangeProfilePictureSerializer
+    model = Account
+
+    def update(self, request, *args, **kwargs):
+        self.object = Account.objects.get(id = self.kwargs['pk'])
+        serializer = self.get_serializer(data=request.data)
+
+        if serializer.is_valid():
+            file = request.data['file']
+            self.object.profile_picture = file
             self.object.save()
             response = {
                 'status': 'success',

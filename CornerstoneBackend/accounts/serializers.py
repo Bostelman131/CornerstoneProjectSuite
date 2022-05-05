@@ -17,8 +17,9 @@ class AccountSerializer(serializers.ModelSerializer):
 
 class ChangePasswordSerializer(serializers.Serializer):
     model = Account
-
-    """
-    Serializer for password change endpoint.
-    """
     password = serializers.CharField(required=True)
+
+class ChangeProfilePictureSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Account
+        fields = ("id","profile_picture")

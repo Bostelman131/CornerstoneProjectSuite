@@ -29,7 +29,7 @@ function App() {
   const [ activeUser, setActiveUser ] = useState(""); // STORES ACTIVE USER
   const [ loginLoading, setLoginLoading ] = useState(false) // STORES WHETHER THE LOGIN IS LOADING
   const [ loginError, setLoginError ] = useState(''); // STORES THE ERRORS ASSOCIATED WITH LOGIN
-  const [  rememberMe, setRememberMe ] = useState(false);
+  const [ rememberMe, setRememberMe ] = useState(false);
 
   async function getUserData(id, setToFunction){  // GETS INFORMATION PERTAINING TO ACTIVE USER
     setSalesman(false);
@@ -61,7 +61,11 @@ function App() {
       })
   }
 
-  if(localStorage['apiToken'] && apiToken === null){
+  const setActiveUserData = (id) =>{  // SET USER INFORMATION FOR ID TO ACTIVE USER - USED AFTER UPDATE OF ACCOUNT SETTINGS
+    getUserData(id,setActiveUser);
+  }
+
+  if(localStorage['apiToken'] && apiToken === null){  // LOADS API TOKEN AND USER INFORMATION IF CACHED AS COOKIE - REMEMBER ME
     setApiToken(localStorage.getItem('apiToken'));
     getUserData(localStorage.getItem('userID'),setActiveUser);
   }
@@ -82,7 +86,7 @@ function App() {
 
         getAll();
 
-        getUserData(response.data.id,setActiveUser);
+        setActiveUserData(response.data.id);
 
       }).catch( e=> {
 
@@ -112,6 +116,7 @@ function App() {
   }
 
 
+
 // SEARCH FUNCTIONS - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   let [ selectedNav , setSelectedNav ] = useState('Dashboard'); // KEEPS TRACK OF SELECTED NAV LINK
@@ -122,8 +127,9 @@ function App() {
   const [customerNumber, setCustomerNumber] = useState("");
   const [custYear, setCustYear] = useState("");
   const [projectState, setProjectState] = useState("");
+  const [managedBy, setManagedBy] = useState("");
   const [projectType, setProjectType] = useState("");
-  const [managedBy, setManagedBy] = useState("")
+  const [salesStatus, setSalesStatus] = useState("");
 
   const resetSearches = () => { // SETS ALL SEARCH FIELDS TO ""
     setProjectNumber("");
@@ -133,6 +139,7 @@ function App() {
     setManagedBy("");
     setProjectState("");
     setProjectType("");
+    setSalesStatus("");
   }
   
   const dropDownOptions = [ // DATA FOR DROP DOWN MENU ON HEADER
@@ -143,14 +150,14 @@ function App() {
     {Label:"State", currentText:projectState, SearchBarText:"Enter a state abbreviation...", filterFunction:setProjectState},
     {Label:"Managed By", currentText:managedBy, SearchBarText:"Enter an employee's name...", filterFunction:setManagedBy},
     {Label:"Project Type", currentText:projectType, SearchBarText:"Enter a project Type...", filterFunction:setProjectType, select:true, options:["","Project","Maintenance","Warranty"]},
-    {Label:"Sales Status", currentText:projectType, SearchBarText:"Enter a project Type...", filterFunction:setProjectType, select:true, options:["","Sent","Not Sent"]},
+    {Label:"Sales Status", currentText:salesStatus, SearchBarText:"Enter a sales status...", filterFunction:setSalesStatus, select:true, options:["","Sent","Not Sent"]},
   ]
 
-  const homeView = () => {
+  const homeView = () => {  // TAKES USER BACK TO HOME / DASHBOARD
     setSelectedNav('Dashboard');
   }
 
-  useEffect (()=> {
+  useEffect (()=> {   // IF SELECTED NAV CHANGES, GET ALL IS CALLED
     getAll();
 
   }, [selectedNav])
@@ -159,14 +166,12 @@ function App() {
 
 // PROJECTS - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   
-  const [ results, setResults ] = useState([])
+  const [ results, setResults ] = useState([])  // COMBINATION OF SALES AND PROJECTS TO DISPLAY IN DASHBOARD
   const [ projects, setProjects] = useState([]); // STORES ALL PROJECTS
-  const [ sales, setSales ] = useState([]); 
-  const [ warranty, setWarranty ] = useState([]); 
-  const [ maintenance, setMaintenance ] = useState([]); 
+  const [ sales, setSales ] = useState([]);   // STORES ALL SALES
 
-  const [  projectViewProject, setProjectViewProject ] = useState({});
-  const [  projectViewSale, setProjectViewSale ] = useState({});
+  const [  projectViewProject, setProjectViewProject ] = useState({});  // STORES PROJECT OBJECT WHEN A TILE IS CLICKED ON
+  const [  projectViewSale, setProjectViewSale ] = useState({});  // STORES SALES OBJECT WHEN A TILE IS CLICKED ON
 
   const checkSearches = () => { // CHECKS TO DETERMINE IF ANY SEARCHES HAVE BEEN MADE - TRUE IF SO - FALSE IF NOT
     let searches = false;
@@ -190,6 +195,9 @@ function App() {
       searches = true;
     }
     if(projectType != ""){
+      searches = true;
+    }
+    if(salesStatus != ""){
       searches = true;
     }
 
@@ -250,49 +258,6 @@ function App() {
         console.log(e);
       })
   }
-  
-  useEffect (() => {  // FILTER PROJECTS BASED ON SEARCH TERMS - UPDATES ON INPUT CHANGE TO SEARCH FIELDS LISTED
-    setResults([]);
-
-    const searchObject = {
-      "projectNumber": projectNumber,
-      "clientName":clientName,
-      "customerID":customerNumber,
-      "projectCreationDate":custYear,
-      "projectState":projectState,
-      "owner":managedBy,
-      "projectType":projectType,
-    }
-
-    if(selectedNav === 'Dashboard'){
-      searchObject["archived"] = false;
-      try{
-        getFilteredProject(searchObject);
-        getFilteredSales(searchObject);
-       }
-      catch{
-        console.log("Error getting all projects")
-      }
-    }
-    
-    if(selectedNav === 'Archived Projects'){
-      searchObject["archived"] = true;
-      try{
-        getFilteredProject(searchObject);
-        setSales([]);
-       }
-      catch{
-        console.log("Error getting all projects")
-      }
-    }
-
-
-
-  }, [projectNumber, clientName, customerNumber, custYear, managedBy, projectState, projectType])
-
-  useEffect (() => {
-    combineResults();
-  }, [projects, sales, warranty, maintenance])
 
   async function getFilteredProject(searchObject) { // CALLS API TO GET FILTERED PROJECTS
     projectDataService.getFilterProjects(apiToken,searchObject)
@@ -333,7 +298,7 @@ function App() {
     getAll();
   }
 
-  async function getProjectView(projectNumber) {
+  async function getProjectView(projectNumber) {  // GET A SPECIFIC PROJECT BASED ON ITS PROJECT NUMBER -> STORE TO 'projectViewProject'
     projectDataService.getProject(apiToken, projectNumber)
     .then(response => {
       setProjectViewProject(response.data);
@@ -341,23 +306,17 @@ function App() {
     })
   }
 
-  async function getSaleView(projectNumber) {
+  async function getSaleView(projectNumber) {  // GET A SPECIFIC SALES OPP BASED ON ITS PROJECT NUMBER -> STORE TO 'projectViewSale'
     projectDataService.getSale(apiToken, projectNumber)
     .then(response => {
       setProjectViewSale(response.data);
     })
   }
 
-  const combineResults = () => {
+  const combineResults = () => {    // COMBINE 'projects' & 'sales' -> 'results'
     const tempArray = []
 
     projects.forEach(record => {
-      tempArray.push(record);
-    })
-    maintenance.forEach(record => {
-      tempArray.push(record);
-    })
-    warranty.forEach(record => {
       tempArray.push(record);
     })
     sales.forEach(record => {
@@ -366,6 +325,49 @@ function App() {
 
     setResults(tempArray);
   }
+
+  useEffect (() => {  // FILTER PROJECTS BASED ON SEARCH TERMS - UPDATES ON INPUT CHANGE TO SEARCH FIELDS LISTED
+    setResults([]);
+
+    const searchObject = {
+      "projectNumber": projectNumber,
+      "clientName":clientName,
+      "customerID":customerNumber,
+      "projectCreationDate":custYear,
+      "projectState":projectState,
+      "owner":managedBy,
+      "projectType":projectType,
+      "salesStatus":salesStatus,
+    }
+
+    if(selectedNav === 'Dashboard'){
+      searchObject["archived"] = false;
+      try{
+        getFilteredProject(searchObject);
+        getFilteredSales(searchObject);
+       }
+      catch{
+        console.log("Error getting all projects")
+      }
+    }
+    
+    if(selectedNav === 'Archived Projects'){
+      searchObject["archived"] = true;
+      try{
+        getFilteredProject(searchObject);
+        setSales([]);
+       }
+      catch{
+        console.log("Error getting all projects")
+      }
+    }
+
+  }, [projectNumber, clientName, customerNumber, custYear, managedBy, projectState, projectType, salesStatus])
+
+  useEffect (() => {  // COMBINES SALES AND PROJECTS WHENEVER ONE CHANGES
+    combineResults();
+  }, [projects, sales])
+
 
 
  // PROJECT VIEW - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -379,7 +381,7 @@ function App() {
 
   const sleep = ms => new Promise(r => setTimeout(r, ms));
 
-  const getNewProjectObject = (selectedProjectManager) => {
+  const getNewProjectObject = (selectedProjectManager) => {     // CREATES A NEW PROJECT OBJECT BASED ON INPUT CHANGES IN PROJECT VIEW
     const newProjectObject = {
     'projectNumber': projectViewProject['projectNumber'],
     'projectFilePath': projectViewProject['file_path'],
@@ -397,7 +399,7 @@ function App() {
     return newProjectObject;
   }
 
-  const getNewSaleObject = (sale=false, selectedProjectManager=undefined) => {
+  const getNewSaleObject = (sale=false, selectedProjectManager=undefined) => {     // CREATES A NEW SALES OBJECT BASED ON INPUT CHANGES IN PROJECT VIEW
     const newSaleObject = {
       'salesNumber': projectViewSale['projectNumber'],
       'clientName': projectViewProject['clientName'],
@@ -430,7 +432,7 @@ function App() {
     return newSaleObject;
   }
 
-  const handlePVSubmit = async (setPVSubmitMessage,setPVLoading,setPVError,setPVSuccess,selectedProjectManager) => {
+  const handlePVSubmit = async (setPVSubmitMessage,setPVLoading,setPVError,setPVSuccess,selectedProjectManager) => {  // HANDLES CHANGES MADE IN PROJECT VIEW
     if(projectViewProject['projectNumber'][0].toLowerCase() != 's'){
 
       if(pvProjectNumber != projectViewProject['projectNumber']){
@@ -528,7 +530,7 @@ function App() {
 
   }
 
-  const handleCPSubmit = async ( redirect, projectNumber, customerNumber, type, owner, setLoading, setMessage, setError, setSuccess, closeReassignWindow ) => {
+  const handleCPSubmit = async ( redirect, projectNumber, customerNumber, type, owner, setLoading, setMessage, setError, setSuccess, closeReassignWindow ) => {  // CREATES A NEW PROJECT WHEN 'CONVERT TO PROJECT' FORM WITHIN PROJECT VIEW IS SUBMITTED
     const tempNewProjectObject = {
       'salesNumber' : pvSalesNumber,
       'projectNumber' : projectNumber,
@@ -578,7 +580,7 @@ function App() {
     })
   }
 
-  const getProjectLinks = async (link,setFunction) => {
+  const getProjectLinks = async (link,setFunction) => {   // SETS ALL DIRECTORIES AT A LINK LOCATION TO THE 'setFunction'
     const linkObject = {
       "url": link,
     }
@@ -589,37 +591,19 @@ function App() {
   })
   }
 
-  useEffect (() => {
-    if(projectViewSale['file_path'] != undefined){
-      getProjectLinks(projectViewSale['file_path'],setSalesLinks)
-    }
-
-    setpvSalesNumber(projectViewSale['projectNumber'])
-
-  }, [projectViewSale] );
-
-  useEffect (() => {
-    if(projectViewProject['file_path'] != undefined){
-      getProjectLinks(projectViewProject['file_path'],setProjectLinks)
-    }
-
-    setpvProjectNumber(projectViewProject['projectNumber']);
-
-  }, [projectViewProject] );
-
-  const getProjectManagers = async (setToFunction) => {
+  const getProjectManagers = async (setToFunction) => {   // LIST OF ALL PROJECT MANAGERS IN SYSTEM AND SETS TO 'setToFunction'
     userDataService.getProjectManagers(apiToken).then( response => {
       setToFunction(response.data['project_managers'])
     })
   }
 
-  const getSalesmen = async (setToFunction) => {
+  const getSalesmen = async (setToFunction) => {   // LIST OF ALL SALESMEN IN SYSTEM AND SETS TO 'setToFunction'
     userDataService.getSalesmen(apiToken).then( response => {
       setToFunction(response.data['project_managers']);
     })
   }
 
-  const getAssignedProjects = async (projectNumber, setToFunction) => {
+  const getAssignedProjects = async (projectNumber, setToFunction) => {   // LIST OF ALL ASSIGNED PROJECTS GIVEN A PROJECT NUMBER AND SETS TO 'setToFunction'
     if(projectNumber != undefined){
       projectDataService.getAssignedProjects(apiToken,projectNumber).then( response => {
         setToFunction(response.data['assigned']);
@@ -627,7 +611,7 @@ function App() {
     }
   }
 
-  const handleProjectClick = (projectNumber, forcedUpdate=false) => {
+  const handleProjectClick = (projectNumber, forcedUpdate=false) => {   // HANDLES A PROJECT TILE CLICK
     
     if(!projectView || forcedUpdate){
       if(projectNumber[0].toLowerCase() != 's'){
@@ -656,7 +640,7 @@ function App() {
     }
   }
 
-  const projectViewProps = {
+  const projectViewProps = { // PROPS - PROJECT VIEW  <----------------------------------------
     fontSize: 28,
     textHeight:20,
     projectViewProject:projectViewProject,
@@ -679,8 +663,24 @@ function App() {
     apiToken: apiToken,
   }
 
+  useEffect (() => {    // IF 'projectViewSale' CHANGES UPDATE LINKS AND 'pvSalesNumber'
+    if(projectViewSale['file_path'] != undefined){
+      getProjectLinks(projectViewSale['file_path'],setSalesLinks)
+    }
 
-    
+    setpvSalesNumber(projectViewSale['projectNumber'])
+
+  }, [projectViewSale] );
+
+  useEffect (() => {    // IF 'projectViewProject' CHANGES UPDATE LINKS AND 'pvProjectNumber'
+    if(projectViewProject['file_path'] != undefined){
+      getProjectLinks(projectViewProject['file_path'],setProjectLinks)
+    }
+
+    setpvProjectNumber(projectViewProject['projectNumber']);
+
+  }, [projectViewProject] );
+
 
 
 
@@ -763,7 +763,7 @@ function App() {
       "type":"file",
       "height": "25px",
       "textarea": false,
-      "tooltip": "Coming soon! Currently there is no way to upload images without a servlet configured",
+      "tooltip": "Select either a .png or .jpg that is a close crop of your face and as close to a square as possible. (Hint - Use clipping tool)",
       "messageFunction" : null,
       "setError": null,
       "setSuccess": null,
@@ -796,6 +796,7 @@ function App() {
     UMSettingLinks,UMSettingLinks,
     UMAppLink:UMAppLink,
     token: apiToken,
+    setActiveUserData:setActiveUserData,
   }
 
   
@@ -858,7 +859,7 @@ function App() {
   const SalesFormTextHeight = "25px";
   const SalesFormTextAreaHeight = "200px";
 
-  const SalesFormObject = [
+  const SalesFormObject = [   // OBJECT USED FOR POPULATING SALES OPP CREATION FORM
     {
       "name": "Client Name",
       "dbTerm": "clientName",
@@ -981,7 +982,7 @@ function App() {
     },
   ]
 
-  const salesDirections = {
+  const salesDirections = {   // DIRECTIONS FOR HOW TO USE SALES OPP CREATION TOOL
     "title":"General Directions",
     "primary": "To create a new sales opportunity within Cornerstone Project Suite, please fill out the form with correct information. Information entered incorrectly on this form will create issues within the folder structure that require manual edits. Once all fields within the form have been correctly entered, please click on the Submit button at the bottom of the form. If all fields are validated, a new sales opportunity will be created within the database and the folder structure will be updated accordingly. After successful creation of the sales opportunity you should be automatically redirected to open the newly created sales folder. If for any reason this portal doesn't operate as intended, please contact your system administrator."
   }
@@ -1000,12 +1001,11 @@ function App() {
 
   
 
-
  // CREATE USER - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  
  const createUserTextHeight = "25px";
 
- const createUserFormObject = [
+ const createUserFormObject = [   // OBJECT USED FOR POPULATING USER CREATION FORM
     {
       "name": "First Name",
       "dbTerm": "first_name",
@@ -1088,7 +1088,7 @@ function App() {
     },
   ]
 
- const createUserDirections = {
+ const createUserDirections = {   // DIRECTIONS FOR HOW TO USE USER CREATION TOOL
    "title":"General Directions",
    "primary": "To create a new user within Cornerstone Project Suite, please fill out the form with correct information. The user's email will be used to sign in to the app with the password provided, please record this information in the event that the auto-notifier within Cornerstone Project Suite fails to successfully notify the user of the account creation. The phone number field on the form is to be 10 digits without any seperating characters. Admin field denotes whether the user is to have special abilites within the app that allows them maximum control. Be cautious of who has this privilege. After the form has been completed, click the submit button to add the user to the Cornerstone Suite System."
  }
@@ -1133,15 +1133,15 @@ function App() {
       {DashIcon: FaDownload,title: "Archived Projects"},
     ]
 
-    if(admin || salesman){
+    if(admin || salesman){  // SHOW 'CREATE SALES OPPORTUNITY' IF SALESMAN OR ADMIN
       NavLinkList.push({DashIcon: FaCommentDollar,title: "Create Sales Opportunity"})
     }
 
-    if(admin){
+    if(admin){  // SHOW 'CREATE USER' IF SALESMAN OR ADMIN
       NavLinkList.push({DashIcon: FaCaretSquareRight,title: "Create A User"})
     }
 
-    NavLinkList.push({DashIcon: FaBezierCurve,title: "Network Diagnostics"})
+    NavLinkList.push({DashIcon: FaBezierCurve,title: "Network Diagnostics"})   // SHOW 'NETWORK DIAGNOSTICS' - LAST TO ORDER LIST PROPERLY
 
     const navBarProps = { // PROPS - NAVBAR (SECONDARY)  <----------------------------------------
       NavList: NavLinkList,

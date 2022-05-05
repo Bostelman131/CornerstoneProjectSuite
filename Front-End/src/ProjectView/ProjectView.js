@@ -9,6 +9,10 @@ const ProjectView = ({ activeUser, fontSize, textHeight, projectViewProject, pro
     salesLinks, pvProjectNumber, pvSalesNumber, handlePVSubmit, getProjectManagers, getSalesmen, handleProjectClick, 
     projectOrSale, getAssignedProjects, projectManager, handleCPSubmit, isProjectNumberUnique, apiToken}) => {
 
+
+
+    
+
     const generalDirections = "In order to convert a sales opportunity to a project, an updated booking sheet will need to be sent to accounting. The booking sheet from sales to modify is found at the 'Booking Sheet' link above, under 'Project Links'. If for some reason this link is not shown, please contact the responsible party displayed in the header. Once accounting responds with a project number and customer number, fill them in below along with the project type. Once all fields have been entered and validated, click on the submit button. This will trigger the folder structure to be created and the newly created project folder to be opened automatically. If for any reason this form doesn't work as intended, please contact your system administrator.";
 
     const primaryFontSize = 24;
@@ -52,6 +56,30 @@ const ProjectView = ({ activeUser, fontSize, textHeight, projectViewProject, pro
     const [ newlyArchived, setNewlyArchived ] = useState(false);
 
     const [ saleSubmitted, setSaleSubmitted ] = useState(false);
+
+
+    const [ developmentProject, setDevelopmentProject ] = useState(false);
+    const [ developmentSale, setDevelopmentSale] = useState(false);
+
+    try{
+        if(projectViewProject.projectNumber === 'P9999999' && developmentProject === false){
+            setDevelopmentProject(true);
+        }
+        if(projectViewProject.projectNumber != 'P9999999' && developmentProject === true){
+            setDevelopmentProject(false);
+        }
+        if(projectViewProject.projectNumber === 'S2200261' && developmentSale === false){
+            setDevelopmentSale(true);
+        }
+        if(projectViewProject.projectNumber != 'S2200261' && developmentSale === true){
+            setDevelopmentSale(false);
+        }
+    }
+    catch{
+        
+    }
+
+
 
     if(saleSubmitted === false && projectViewSale.submitted === true){
         setSaleSubmitted(true);
@@ -335,7 +363,7 @@ const ProjectView = ({ activeUser, fontSize, textHeight, projectViewProject, pro
             return tempDate;
         }
         catch{
-            console.log("Failed to convert Date")
+            // console.log("Failed to convert Date")
         }
     }
 
@@ -466,8 +494,18 @@ const ProjectView = ({ activeUser, fontSize, textHeight, projectViewProject, pro
                     <div className='PV-Primary-Right-Window'>
 
                         <div className='PV-Narrative-Container'>
-                            <label className='PV-Narrative-Header'>Project Overview</label>
-                            <EditTag object={projectViewSale} field={'projectNarrative'} editable={editable} fontSize={14} textColor={'white'} textarea={true}/>
+                            {   developmentProject &&
+                                <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfevIjFkxxyOCAeQLTaRaOk7V1VubYEZHqJSOcn0gLJfd7UvQ/viewform?embedded=true" width="100%" height="100%" frameBorder="0" marginHeight="0" marginWidth="0">Loading…</iframe>
+                            }
+                            {   developmentSale &&
+                                <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfevIjFkxxyOCAeQLTaRaOk7V1VubYEZHqJSOcn0gLJfd7UvQ/viewform?embedded=true" width="100%" height="100%" frameBorder="0" marginHeight="0" marginWidth="0">Loading…</iframe>
+                            }
+                            {   !developmentProject && !developmentSale &&
+                                <>
+                                    <label className='PV-Narrative-Header'>Project Overview</label>
+                                    <EditTag object={projectViewSale} field={'projectNarrative'} editable={editable} fontSize={14} textColor={'white'} textarea={true}/>
+                                </>
+                            }
                         </div>
 
                         {   owner &&

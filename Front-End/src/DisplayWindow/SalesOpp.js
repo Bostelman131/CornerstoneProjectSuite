@@ -84,14 +84,28 @@ function SalesOpp({SalesFormObject, user, salesFormTextHeight, salesFormTextArea
                 </div>
             </div>
 
-            <div className='SalesOpp-Directions'>
-                <label className='SD-Title'>
-                    {salesDirections["title"]}
-                </label>
-                <p className='SD-Primary'>
-                    {salesDirections["primary"]}
-                </p>
+            <div className='SalesOpp-Right-Panel-Window'>
+                <div className='SalesOpp-Directions'>
+                    <label className='SD-Title'>
+                        {salesDirections["title"]}
+                    </label>
+                    <p className='SD-Primary'>
+                        {salesDirections["primary"]}
+                    </p>
+                </div>
+                <div className='SalesOpp-Upload-Window'>
+                    <label className='SD-Title'>Form Link to Share</label>
+                    <p>https://forms.gle/oebg22BTUD5s2Rbg8</p>
+
+                    <div className='SalesOpp-Upload-Portal'>
+                        <label className='SD-Title'>Drag & Drop Quick Create</label>
+                        {/* <input type='file'/> */}
+                        <p>Coming Soon!</p>
+                    </div>
+
+                </div>
             </div>
+
         </div>
     );
 }

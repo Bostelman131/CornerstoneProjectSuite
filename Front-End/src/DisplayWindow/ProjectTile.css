@@ -34,19 +34,20 @@
 
 .Project-Description-Number {
     margin: 0;
-    font-size: 20px;
+    font-size: 17px;
     font-weight: bold;
 }
 
 .Project-Description-Name {
     margin: 0;
-    font-size: 15px;
+    font-size: 18px;
+    font-weight: bold;
     text-decoration: underline;
 }
 
 .Project-Description-Project {
     margin: 0;
-    font-size: 15px;
+    font-size: 17px;
     font-weight: 600;
 }
 
@@ -71,8 +72,9 @@
 }
 
 .Center-Box-Label {
-    font-size: 15px;
+    font-size: 12px;
     font-weight: 500;
+    margin-top: 10px;
 }
 
 .Center-Box-Data {
