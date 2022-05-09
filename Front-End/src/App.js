@@ -122,6 +122,8 @@ function App() {
   let [ selectedNav , setSelectedNav ] = useState('Dashboard'); // KEEPS TRACK OF SELECTED NAV LINK
   const handleNavClick = (title) => {setSelectedNav(title);} // CHANGES SELECTED NAV LINK
   
+  const [ searchTerms, setSearchTerms ] = useState(false);
+
   const [projectNumber , setProjectNumber] = useState(""); // STATES TO TRACK SEARCHES
   const [clientName, setClientName] = useState("");
   const [customerNumber, setCustomerNumber] = useState("");
@@ -205,6 +207,7 @@ function App() {
   }
 
   function getAll() {   // CHECK FOR SEARCHES - IF TRUE - RESET SEARCHES FETCHES PROJECTS  - FALSE - CALL TO GET THEM
+    setSearchTerms(false);
     if(checkSearches()){  
       setProjects([]);
       resetSearches();
@@ -280,6 +283,7 @@ function App() {
   }
 
   function getMyProjects() { // GET ALL PROJECTS OR SALES ASSIGNED TO ACTIVE USER
+    setSearchTerms(true);
     homeView();
     resetSearches();
     setProjects([]);
@@ -293,9 +297,15 @@ function App() {
   }
 
   function getWatchlistProjects() {  // GET ALL PROJECTS ASSIGNED TO WATCHLIST
+    setSearchTerms(true);
     homeView();
+    setResults([]);
+    setSales([]);
     setProjects([]);
-    getAll();
+    const tempSearchObject = {
+      "watchList": true,
+    }
+    getFilteredProject(tempSearchObject);
   }
 
   async function getProjectView(projectNumber) {  // GET A SPECIFIC PROJECT BASED ON ITS PROJECT NUMBER -> STORE TO 'projectViewProject'
@@ -328,6 +338,7 @@ function App() {
 
   useEffect (() => {  // FILTER PROJECTS BASED ON SEARCH TERMS - UPDATES ON INPUT CHANGE TO SEARCH FIELDS LISTED
     setResults([]);
+    setSearchTerms(checkSearches());
 
     const searchObject = {
       "projectNumber": projectNumber,
@@ -820,6 +831,8 @@ function App() {
     user: activeUser,
     maxHeight: 55,
     toggleUserMenu : toggleUserMenu,
+    searchTerms: searchTerms,
+    getAll: getAll,
   }
 
 

@@ -2,13 +2,9 @@ import headerImage from './refs/headerImage.jpg';
 import SearchBar from './SearchBar'
 import UserPanel from '../UserPanel/UserPanel'
 import './AppHeader.css';
-import { useState } from 'react';
-import {FaSignOutAlt,FaAngleUp} from "react-icons/fa";
+import {FaRegWindowClose} from "react-icons/fa";
 
-
-
-
-const AppHeader = ( {user, searchbarProps, maxHeight, toggleUserMenu, getAll}) => {
+const AppHeader = ( {user, searchbarProps, maxHeight, toggleUserMenu, searchTerms, getAll}) => {
 
   const UserPanelProps = {
     user : user,
@@ -19,6 +15,9 @@ const AppHeader = ( {user, searchbarProps, maxHeight, toggleUserMenu, getAll}) =
       <header className="App-Header">
         <img src={headerImage} className="Header-Image" alt="Cornerstone" />
         <div className = 'Header-Controls'>
+          {searchTerms &&
+            <FaRegWindowClose className='Header-Clear-Searches-Button' onClick={e => getAll()}/>
+          }
           <SearchBar {...searchbarProps}/>
           <div >
             <div className="User-Panel-Header" onClick={toggleUserMenu}>

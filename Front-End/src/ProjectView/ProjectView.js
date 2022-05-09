@@ -624,5 +624,3 @@ const ProjectView = ({ activeUser, fontSize, textHeight, projectViewProject, pro
 }
 
 export default ProjectView;
-
-

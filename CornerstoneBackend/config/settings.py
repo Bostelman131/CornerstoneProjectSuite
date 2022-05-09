@@ -160,7 +160,7 @@ CORS_ALLOW_HEADERS = ['*']
 
 CORS_ALLOWED_ORIGINS = (
     "http://localhost:7000",
-    # "http://172.18.50.102:1",
+    # "*",
 )
 
 # CORS_ALLOWED_ORIGIN_REGEXES = [

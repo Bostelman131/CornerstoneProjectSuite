@@ -120,6 +120,13 @@ class DetailProject(generics.ListCreateAPIView):
         except:
             pass
 
+        try:
+            watchList = self.request.query_params.get('watchList')
+            if(watchList != None ):
+                projects = projects.filter(watchList=True)
+        except:
+            pass
+
         return projects
 
 class SalesApiView(generics.ListAPIView):

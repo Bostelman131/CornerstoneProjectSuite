@@ -32,6 +32,7 @@ class Project(models.Model):
     projectNumber = models.CharField(max_length=8, primary_key=True)
     salesLink = models.ForeignKey(SalesOpp,on_delete=models.PROTECT)
     archived = models.BooleanField(default=False)
+    watchList = models.BooleanField(default=False)
     customerID = models.CharField(max_length=8)
     projectFilePath = models.CharField(max_length=200)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.PROTECT)
