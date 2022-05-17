@@ -36,8 +36,6 @@ def rename(filepath, res_names):
             rename(filepath+"\\"+f, res_names)
 
         else:
-            print(filepath)
-            print(f)
             individual_rename(filepath,f,res_names)
 
 

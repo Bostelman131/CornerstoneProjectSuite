@@ -3,11 +3,20 @@ import Dashboard from './Dashboard';
 import SalesOpp from './SalesOpp';
 import CreateUser from './CreateUser';
 import NetworkDiagnostics from './NetworkDiagnostics';
+import OfficeInformation from '../OfficeInformation/OfficeInformation'
 
-function DisplayWindow( { navSelected, salesOppProps, createUserProps, networkProps, dashboardProps, ...props } ) {
+
+function DisplayWindow( { navSelected, salesOppProps, createUserProps, networkProps, dashboardProps, officeInformation, pinnedProjectsProps, ...props } ) {
 
     switch (navSelected) {
         case "Dashboard":
+            return(
+                <div className='Display-Window'>
+                    <Dashboard {...dashboardProps}/>
+                </div>
+            );
+
+        case "Pinned Projects":
             return(
                 <div className='Display-Window'>
                     <Dashboard {...dashboardProps}/>
@@ -45,7 +54,7 @@ function DisplayWindow( { navSelected, salesOppProps, createUserProps, networkPr
         case "Office Information":
             return(
                 <div className='Display-Window'>
-                    <NetworkDiagnostics {...networkProps} />
+                    <OfficeInformation {...officeInformation} />
                 </div>
             ); 
             

@@ -49,10 +49,50 @@ class projectDataService{
         return axios.get( `${API_URL}projects/unique/${projectNumber}/` );
     }
 
-    getAssignedProjects(token, projectNumber) {
+    getPinnedSales(token, userID) {
+        axios.defaults.headers.common["Authorization"] = "token" + token;
+        return axios.get( `${API_URL}getPinnedSales/${userID}/` );
+    }
+
+    getPinnedProjects(token, userID) {
+        axios.defaults.headers.common["Authorization"] = "token" + token;
+        return axios.post( `${API_URL}getPinned/${userID}/` );
+    }
+
+    pinProject(token, userID, projectNumber,deletePin) {
+        const projectNumberObject = {
+            "projectNumber": projectNumber,
+            "delete":deletePin,
+        }
+
+        const JSONProjectNumberObject = JSON.stringify(projectNumberObject);
 
         axios.defaults.headers.common["Authorization"] = "token" + token;
+        return axios.post( `${API_URL}pin/${userID}/`, JSONProjectNumberObject );
+    }
+
+    checkPinnedProject( token, userID, projectNumber ) {
+        const projectNumberObject = {
+            "projectNumber": projectNumber
+        }
+
+        const JSONProjectNumberObject = JSON.stringify(projectNumberObject);
+
+        axios.defaults.headers.common["Authorization"] = "token" + token;
+        return axios.post( `${API_URL}checkPinned/${userID}/`, JSONProjectNumberObject );
+    }
+
+
+
+
+    getAssignedProjects(token, projectNumber) {
+        axios.defaults.headers.common["Authorization"] = "token" + token;
         return axios.get( `${API_URL}getAssigned/${projectNumber}/` );
+    }
+
+    getPinnedProjects(token, userId) {
+        axios.defaults.headers.common["Authorization"] = "token" + token;
+        return axios.get( `${API_URL}getPinned/${userId}/` );
     }
 
 
@@ -110,8 +150,6 @@ class projectDataService{
         axios.defaults.headers.common["Authorization"] = "token" + token;
         return axios.post( `${API_URL}createProject/`, JSONProjectObject);
     }
-
-
 
     updateProject(projectNumber, newProjectObject, newSaleObject, token){
 

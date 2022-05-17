@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 
-import {FaClipboardList, FaCaretSquareRight, FaCommentDollar, FaDownload, FaBezierCurve} from "react-icons/fa"; // Icons for Navbar
+import {FaClipboardList, FaCaretSquareRight, FaCommentDollar, FaDownload, FaBezierCurve, FaFlipboard, FaMapPin} from "react-icons/fa"; // Icons for Navbar
 
 import './App.css';
 import AppHeader from './Header/AppHeader';
@@ -165,7 +165,6 @@ function App() {
   }, [selectedNav])
 
 
-
 // PROJECTS - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   
   const [ results, setResults ] = useState([])  // COMBINATION OF SALES AND PROJECTS TO DISPLAY IN DASHBOARD
@@ -208,24 +207,25 @@ function App() {
 
   function getAll() {   // CHECK FOR SEARCHES - IF TRUE - RESET SEARCHES FETCHES PROJECTS  - FALSE - CALL TO GET THEM
     setSearchTerms(false);
-    if(checkSearches()){  
+    if(checkSearches() && selectedNav != 'Pinned Projects'){  
       setProjects([]);
       resetSearches();
     }
     else{  
-
       try{
         if(selectedNav === 'Dashboard'){
           getAllProjects();
           getAllSales();
         }
-        if(selectedNav === 'Archived Projects'){
+        else if(selectedNav === 'Archived Projects'){
           getAllArchivedProjects();
           setSales([]);
         }
-        
-        
-       }
+        else if(selectedNav === 'Pinned Projects'){
+          getPinnedProjects();
+          getPinnedSales();
+        }
+      }
       catch{
         console.log("Error getting all projects")
       }
@@ -308,6 +308,24 @@ function App() {
     getFilteredProject(tempSearchObject);
   }
 
+  async function getPinnedProjects() {
+    setProjects([]);
+
+    projectDataService.getPinnedProjects(apiToken, activeUser.id)
+    .then( response => {
+      setProjects(response.data);
+    })
+  }
+
+  async function getPinnedSales() {
+    setSales([]);
+
+    projectDataService.getPinnedSales(apiToken, activeUser.id)
+    .then( response => {
+      setSales(response.data);
+    })
+  }
+
   async function getProjectView(projectNumber) {  // GET A SPECIFIC PROJECT BASED ON ITS PROJECT NUMBER -> STORE TO 'projectViewProject'
     projectDataService.getProject(apiToken, projectNumber)
     .then(response => {
@@ -358,7 +376,7 @@ function App() {
         getFilteredSales(searchObject);
        }
       catch{
-        console.log("Error getting all projects")
+        console.log("Error Occurred Searching Projects")
       }
     }
     
@@ -369,7 +387,16 @@ function App() {
         setSales([]);
        }
       catch{
-        console.log("Error getting all projects")
+        console.log("Error Occurred Searching Archived Projects")
+      }
+    }
+
+    if(selectedNav === 'Pinned Porjects'){
+      try{
+        console.log("Searching Pinned Projects comming soon!")
+       }
+      catch{
+        console.log("Error Occurred Searching Pinned Projects")
       }
     }
 
@@ -378,6 +405,65 @@ function App() {
   useEffect (() => {  // COMBINES SALES AND PROJECTS WHENEVER ONE CHANGES
     combineResults();
   }, [projects, sales])
+
+
+
+// PINNED PROJECTS - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+const [ pinnedProject, setPinnedProject ] = useState(false);
+
+const checkPinnedProject = async ( projectNumber ) => {
+  setPinnedProject(false);
+  
+  projectDataService.checkPinnedProject(apiToken, activeUser.id, projectNumber)
+  .then((response) => {
+
+    if(response.status === 200){
+      setPinnedProject(response.data["pinned"]);
+    }
+
+    else{
+      console.log("Failed to Check Pinned Project")
+    }
+  })
+}
+
+const pinProject = async ( projectNumber, setMessage, setError, setSuccess, setLoading ) => {
+  projectDataService.pinProject(apiToken, activeUser.id, projectNumber,pinnedProject)
+  .then((response) => {
+
+    if(response.status === 201){
+      setMessage("Project Successfully Pinned");
+      setSuccess(true);
+    }
+
+    else if(response.status === 200){
+      setMessage("Project Successfully Un-Pinned");
+      setSuccess(true)
+    }
+
+    else{
+      setMessage("Project Failed to Pin");
+      setError(true)
+    }
+
+    checkPinnedProject(projectNumber);
+    if(selectedNav === 'Pinned Projects'){
+      getAll();
+    }
+
+
+    sleep(1300).then( res => {
+      setLoading(false);
+      setMessage("Please Wait... Loading...");
+      setError(false);
+      setSuccess(false);
+    });
+
+  })
+}
+
+
 
 
 
@@ -623,7 +709,8 @@ function App() {
   }
 
   const handleProjectClick = (projectNumber, forcedUpdate=false) => {   // HANDLES A PROJECT TILE CLICK
-    
+    checkPinnedProject(projectNumber);
+
     if(!projectView || forcedUpdate){
       if(projectNumber[0].toLowerCase() != 's'){
         setProjectOrSale("project")
@@ -672,6 +759,8 @@ function App() {
     handleCPSubmit:handleCPSubmit,
     isProjectNumberUnique: projectDataService.isProjectNumberUnique,
     apiToken: apiToken,
+    pinnedProject:pinnedProject,
+    pinProject:pinProject,
   }
 
   useEffect (() => {    // IF 'projectViewSale' CHANGES UPDATE LINKS AND 'pvSalesNumber'
@@ -707,7 +796,6 @@ function App() {
   const UMQuickLinks = {  // QUICK LINKS - USER MENU
     "My Projects": getMyProjects,
     "Watchlist Projects": getWatchlistProjects,
-    
   }
 
   const UMSettingLinks = [  // ACCOUNT SETTINGS - USER MENU
@@ -1127,6 +1215,14 @@ function App() {
     handleProjectClick:handleProjectClick,
   }
 
+// OFFICE INFORMATION - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  const officeInformation = {
+    header: "Cornerstone Detention Products - Garner Branch",
+    address: "621 Poole Dr. Garner, NC 27529",
+    internetUsername: "CornerstoneWifiPortal",
+    internetPassword: "Cornerstone@621nc"
+  }
+
 
 // PRIMARY & SECONDARY WINDOW PROPS - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -1139,10 +1235,12 @@ function App() {
       networkProps: networkProps,
       salesOppProps:salesOppProps,
       createUserProps:createUserProps,
+      officeInformation:officeInformation,
     }
 
     const NavLinkList = [ // ICONS AND TITLES FOR NAVBAR LINKS (SECONDARY)
       {DashIcon: FaClipboardList,title: "Dashboard"},
+      {DashIcon: FaMapPin,title: "Pinned Projects"},
       {DashIcon: FaDownload,title: "Archived Projects"},
     ]
 
@@ -1154,6 +1252,7 @@ function App() {
       NavLinkList.push({DashIcon: FaCaretSquareRight,title: "Create A User"})
     }
 
+    NavLinkList.push({DashIcon: FaFlipboard,title: "Office Information"})   // SHOW 'OFFICE INFORMATION' - LAST TO ORDER LIST PROPERLY
     NavLinkList.push({DashIcon: FaBezierCurve,title: "Network Diagnostics"})   // SHOW 'NETWORK DIAGNOSTICS' - LAST TO ORDER LIST PROPERLY
 
     const navBarProps = { // PROPS - NAVBAR (SECONDARY)  <----------------------------------------

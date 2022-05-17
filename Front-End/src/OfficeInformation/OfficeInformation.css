@@ -1,4 +1,87 @@
 .Office-Information-Window {
     height: 100%;
+    width: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
 
+.OI-Header {
+    height: 10%;
+    background-color: #32584F;
+    color: white;
+    align-content: center;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.OI-Header-Primary {
+    font-size: 2rem;
+    font-weight: 500;
+}
+
+.OI-Header-Secondary {
+    font-size: 1.2rem;
+    font-weight: 400;
+}
+
+.OI-Primary-Window {
+    height: 90%;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+}
+
+.OI-Left-Pane {
+    width: 50%;
+    height: 94%;
+    margin: 2%;
+}
+
+.OI-Internet-Details {
+    display: flex;
+    flex-direction: column;
+    border: 2px solid #32584F;
+    border-radius: 10px;
+}
+
+.OI-Small-Container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.OI-Label {
+    font-size: 15px;
+}
+
+.OI-Data {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.Wifi-Stamp {
+    height:5%;
+    width:30%;
+}
+
+.Floorplan {
+    width: 100%;
+    margin-top: 30px;
+}
+
+
+.OI-Right-Pane {
+    width: 50%;
+    height: 94%;
+    margin: 2%;
+
+}
+
+.Phone-List {
+    height: 100%;
+    width: 90%;
 }

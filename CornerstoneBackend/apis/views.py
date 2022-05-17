@@ -1,9 +1,11 @@
 from email import message
+from pyexpat import model
 from django.http import JsonResponse
 from django.contrib.auth import authenticate
 from rest_framework import generics
 from rest_framework.views import APIView
-from rest_framework import permissions
+from rest_framework import permissions, status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from django.db import IntegrityError
@@ -12,11 +14,10 @@ from rest_framework.parsers import JSONParser
 from rest_framework.authtoken.models import Token
 from django.views.decorators.csrf import csrf_exempt
 from datetime import date
-from django.views.generic.edit import CreateView
 
-from .models import Project,SalesOpp
+from .models import PinnedSales, Project,SalesOpp, PinnedProject, PinnedSales
 from accounts.models import Account
-from .serializers import ProjectSerializer, SalesSerializer, SalesPostSerializer
+from .serializers import ProjectSerializer, SalesSerializer, SalesPostSerializer, PinnedProjectSerializer, ProjectsPinnedSerializer, PinnedSalesSerializer, SalesPinnedSerializer
 from accounts.serializers import AccountSerializer, ChangePasswordSerializer, ChangeProfilePictureSerializer
 
 from apis.csd import create
@@ -222,9 +223,21 @@ class PostSalesOpp(generics.CreateAPIView):
 
     def post(self, request, *args, **kwargs):
         
-        new_number = str((SalesOpp.objects.all().count())+1).zfill(3)
+        sales = SalesOpp.objects.all()
+
+        salesNumberArray = []
         current_year = str(date.today().year)
         year_section = current_year[2:]
+        for sale in sales:
+            if(sale.salesNumber[1:3] == year_section):
+                salesNumberArray.append(sale.salesNumber[3:6])
+        
+        if len(salesNumberArray) < 1:
+            new_number = str(1).zfill(3)
+        else:
+            salesNumberArray.sort(reverse=True)
+            new_number = str(int(salesNumberArray[0])+1).zfill(3)
+            
         branch_id = "61"
         prefix = "S"
         sales_number = prefix+year_section+new_number+branch_id
@@ -261,7 +274,6 @@ class DetailAccount(generics.RetrieveUpdateAPIView):
 class ChangePassword(generics.UpdateAPIView):
     serializer_class = ChangePasswordSerializer
     model = Account
-    # permission_classes = (IsAuthenticated,)
 
     def update(self, request, *args, **kwargs):
         self.object = Account.objects.get(id = self.kwargs['pk'])
@@ -304,7 +316,86 @@ class UploadView(generics.UpdateAPIView):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class PinnedProjectView(generics.ListCreateAPIView):
+    serializer_class = ProjectsPinnedSerializer
+    # permission_classes = [IsAuthenticated]
 
+    def get_queryset(self):
+        return PinnedProject.objects.filter(owner = self.kwargs.get('pk'))
+
+class PinnedSalesView(generics.ListCreateAPIView):
+    serializer_class = SalesPinnedSerializer
+    # permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return PinnedSales.objects.filter(owner = self.kwargs.get('pk'))
+
+class FilteredPinnedProjectView(generics.ListCreateAPIView):
+    serializer_class = PinnedProjectSerializer
+
+    def get_queryset(self):
+        pinned_projects = PinnedProject.objects.filter(owner = self.kwargs.get('pk'))
+
+        try:
+            projectNumber = self.request.query_params.get('projectNumber')
+            if(projectNumber != None ):
+                pinned_projects = pinned_projects.project.filter(salesNumber__istartswith=projectNumber)
+        except:
+            pass
+
+        try:
+            clientName = self.request.query_params.get('clientName')
+            if(clientName != None ):
+                pinned_projects = pinned_projects.project.filter(clientName__icontains=clientName)
+        except:
+            pass
+
+        try:
+            customerID = self.request.query_params.get('customerID')
+            if(customerID != None ):
+                pinned_projects = pinned_projects.project.filter(customerID__startswith=customerID)
+        except:
+            pass
+
+        try:
+            projectCreationDate = self.request.query_params.get('projectCreationDate')
+            if(projectCreationDate != None ):
+                pinned_projects = pinned_projects.project.filter(creationDate__startswith=projectCreationDate)
+        except:
+            pass
+
+
+        try:
+            owner = self.request.query_params.get('owner')
+            if(owner != None ):
+                projects = projects.filter(owner__first_name__istartswith=owner)
+        except:
+            pass
+
+        try:
+            projectState = self.request.query_params.get('projectState')
+            if(projectState != None ):
+                projects = projects.filter(projectState__istartswith=projectState)
+        except:
+            pass
+
+        try:
+            projectType = self.request.query_params.get('projectType')
+            if(projectType != None ):
+                projects = None
+        except:
+            pass
+
+        try:
+            salesStatus = self.request.query_params.get('salesStatus')
+            if(salesStatus == "Sent" ):
+                projects = projects.filter(submitted=True)
+            if(salesStatus == "Not Sent" ):
+                projects = projects.filter(submitted=False)
+        except:
+            pass
+
+        return projects
     
 
 # ALLOWS A USER TO BE CREATED
@@ -556,3 +647,97 @@ def CreateProject(request):
 
     except:
         return JsonResponse({'message': 'Could not get assigned project list'}, status=500)
+
+@csrf_exempt
+def CheckPinnedView(request, pk):
+    if request.method == 'POST':
+        try:
+            data = JSONParser().parse(request)
+            projectNumber = data['projectNumber']
+
+            if projectNumber[0] == 'S':
+                pinnedSales = PinnedSales.objects.filter(owner = pk)
+                pinnedSales = pinnedSales.filter(salesOpp = projectNumber)
+
+                if(pinnedSales.count() > 0):
+                    return JsonResponse({'pinned': True}, status=200)
+                else:
+                    return JsonResponse({'pinned': False}, status=200)
+
+            else:
+                pinnedProjects = PinnedProject.objects.filter(owner = pk)
+                pinnedProjects = pinnedProjects.filter(project = projectNumber)
+
+                if(pinnedProjects.count() > 0):
+                    return JsonResponse({'pinned': True}, status=200)
+                else:
+                    return JsonResponse({'pinned': False}, status=200)
+
+
+        except:
+            return JsonResponse({'message': 'Could Not Getted Pinned Project List'}, status=500)
+
+@csrf_exempt
+def pinProject(request, pk):
+    if request.method == 'POST':
+        try:
+            data = JSONParser().parse(request)
+
+            userId = pk
+            user = Account.objects.get(id = userId)
+
+            projectNumber = data['projectNumber']            
+
+            if projectNumber[0] == 'S':
+                project = SalesOpp.objects.get(salesNumber = projectNumber)
+
+                if(data["delete"]):
+                    pinnedSales = PinnedSales.objects.filter(owner = pk)
+                    pinnedSales = pinnedSales.get(salesOpp = project)
+
+                    PinnedSales.delete(pinnedSales)
+
+                    return JsonResponse({'message': 'Pin Successfully Deleted'}, status=200)
+
+                else:
+                    newPin = PinnedSales.objects.create(
+                        owner = user,
+                        salesOpp = project,
+                    )
+
+                    newPin.save()
+
+                    return JsonResponse({'message': 'Pin Successfully Created'}, status=201)
+            else:
+                project = Project.objects.get(projectNumber = projectNumber)
+
+                if(data["delete"]):
+                    pinnedProjects = PinnedProject.objects.filter(owner = pk)
+                    pinnedProjects = pinnedProjects.get(project = data['projectNumber'])
+
+                    PinnedProject.delete(pinnedProjects)
+
+                    return JsonResponse({'message': 'Pin Successfully Deleted'}, status=200)
+
+                else:
+                    newPin = PinnedProject.objects.create(
+                        owner = user,
+                        project = project,
+                    )
+
+                    newPin.save()
+
+                    return JsonResponse({'message': 'Pin Successfully Created'}, status=201)
+
+        except:
+            return JsonResponse({'message': 'Could not get assigned project list'}, status=500)
+
+
+
+
+
+
+
+
+# @api_view(['GET'])
+# @permission_classes([IsAuthenticated])

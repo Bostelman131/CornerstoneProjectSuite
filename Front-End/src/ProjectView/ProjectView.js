@@ -7,7 +7,7 @@ import ConvertProject from './ConvertProject'
 
 const ProjectView = ({ activeUser, fontSize, textHeight, projectViewProject, projectViewSale, setProjectView, projectLinks, 
     salesLinks, pvProjectNumber, pvSalesNumber, handlePVSubmit, getProjectManagers, getSalesmen, handleProjectClick, 
-    projectOrSale, getAssignedProjects, projectManager, handleCPSubmit, isProjectNumberUnique, apiToken}) => {
+    projectOrSale, getAssignedProjects, projectManager, handleCPSubmit, isProjectNumberUnique, apiToken, pinnedProject, pinProject}) => {
 
 
 
@@ -50,6 +50,11 @@ const ProjectView = ({ activeUser, fontSize, textHeight, projectViewProject, pro
     const [ cpSubmitMessage, setCPSubmitMessage ] = useState("Please Wait... Loading...");
     const [ cpSubmitError, setCPSubmitError ] = useState(false); 
     const [ cpSubmitSuccess, setCPSubmitSuccess ] = useState(false);
+
+    const [ pLoading, setPLoading ] = useState(false);
+    const [ pSubmitMessage, setPSubmitMessage ] = useState("Please Wait... Pinning Project...");
+    const [ pSubmitError, setPSubmitError ] = useState(false); 
+    const [ pSubmitSuccess, setPSubmitSuccess ] = useState(false);
 
     const [ projectType, setProjectType ] = useState("Project")
     const [ archived, setArchived ] = useState(false);
@@ -367,6 +372,15 @@ const ProjectView = ({ activeUser, fontSize, textHeight, projectViewProject, pro
         }
     }
 
+    const handlePinnedClick = () => {
+        setPLoading(true);
+
+        if(pinnedProject)   {setPSubmitMessage("Please Wait... Pinning Project...")}
+        else    {setPSubmitMessage("Please Wait... Un-Pinning Project...")}
+
+        pinProject(projectViewProject['projectNumber'], setPSubmitMessage, setPSubmitError, setPSubmitSuccess, setPLoading)
+    }
+
 
     
     return (
@@ -377,6 +391,13 @@ const ProjectView = ({ activeUser, fontSize, textHeight, projectViewProject, pro
             <div className='PV-Header'>
 
                 <div className='PV-Header-Label-Container'>
+                    <div className='PV-Pinned-Project-Container'>
+                        <input className='PV-Pinned-Input' type='checkbox' checked={pinnedProject} onChange={e => handlePinnedClick()}></input>
+                        {   pLoading &&
+                            <label>{pSubmitMessage}</label>
+                        }
+                    </div>
+                    
                     <EditTag object={projectViewProject} field={'projectNumber'} editable={editable} fontSize={fontSize} textColor={'white'} textarea={false} maxLength={8}/>
                     <EditTag object={projectViewProject} field={'clientName'} editable={editable} fontSize={fontSize} textColor={'white'} textarea={false} maxLength={25}/>
                     <EditTag object={projectViewProject} field={'projectName'} editable={editable} fontSize={fontSize} textColor={'white'} textarea={false} maxLength={25}/>
@@ -567,11 +588,16 @@ const ProjectView = ({ activeUser, fontSize, textHeight, projectViewProject, pro
                 </div>
                 }
 
-                { !projectOrNot && converted &&
+
+                { !projectOrNot && 
                     <div className='PV-Projects-Window'>
                         <div className='PV-Inner-Header'>
                             <label className='PV-Header-Title'>Assigned Projects</label>
                         </div>
+
+                        {/* {   owner &&
+                            <div>Turn-over to Project Manager</div>
+                        } */}
 
                         {
                             assignedProjects.map((project, key) => {

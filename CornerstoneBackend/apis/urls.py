@@ -1,6 +1,7 @@
 from django.urls import path
 
 from .views import ProjectApiView, ProjectArchivedApiView, DetailProject, ProjectView, CreateProject
+from .views import pinProject, CheckPinnedView, PinnedProjectView, PinnedSalesView, FilteredPinnedProjectView
 from .views import DetailAccount,ChangePassword,UploadView
 from .views import SalesApiView,DetailSale,PostSalesOpp, SalesView
 from .views import login, signup
@@ -32,4 +33,10 @@ urlpatterns = [
     path('links/', linkList),
     path('update/<pk>/', UpdateBatch),
     path('getAssigned/<pk>/',getAssignedProjects),
+
+    path('pin/<pk>/', pinProject),
+    path('checkPinned/<pk>/', CheckPinnedView),
+    path('getPinned/<pk>/',PinnedProjectView.as_view()),
+    path('getPinnedSales/<pk>/',PinnedSalesView.as_view()),
+    path('getFilteredPinned/<pk>/',FilteredPinnedProjectView.as_view()),
 ]

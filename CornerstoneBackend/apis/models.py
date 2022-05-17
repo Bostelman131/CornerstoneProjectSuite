@@ -75,3 +75,14 @@ class Project(models.Model):
     @property
     def sales_filepath(self):
         return self.salesLink.salesFilePath
+
+
+class PinnedProject(models.Model):
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.PROTECT)
+    project = models.ForeignKey('Project', on_delete=models.PROTECT)
+    projectPinDate = models.DateTimeField(auto_now_add=True)
+
+class PinnedSales(models.Model):
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.PROTECT)
+    salesOpp = models.ForeignKey('SalesOpp', on_delete=models.PROTECT)
+    projectPinDate = models.DateTimeField(auto_now_add=True)
