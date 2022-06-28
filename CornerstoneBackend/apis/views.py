@@ -14,13 +14,17 @@ from rest_framework.parsers import JSONParser
 from rest_framework.authtoken.models import Token
 from django.views.decorators.csrf import csrf_exempt
 from datetime import date
+from django.conf import settings
+from django.core.mail import send_mail
+from django.core import serializers
 
-from .models import PinnedSales, Project,SalesOpp, PinnedProject, PinnedSales
+from .models import PinnedSales, Project,SalesOpp, PinnedProject, PinnedSales, AssignedSale
 from accounts.models import Account
-from .serializers import ProjectSerializer, SalesSerializer, SalesPostSerializer, PinnedProjectSerializer, ProjectsPinnedSerializer, PinnedSalesSerializer, SalesPinnedSerializer
+from .serializers import ProjectSerializer, SalesSerializer, SalesPostSerializer, PinnedProjectSerializer, ProjectsPinnedSerializer, PinnedSalesSerializer, SalesPinnedSerializer, AssignedSalesSerializer
 from accounts.serializers import AccountSerializer, ChangePasswordSerializer, ChangeProfilePictureSerializer
 
 from apis.csd import create
+from apis.relocate import move_directory
 from apis.links import get_link_list
 
 server_root = "\\\\172.18.50.2\\sedata\\"
@@ -482,7 +486,7 @@ def getSalesmen(request):
     try:
         tempSalesmanList = []
 
-        project_managers = Account.objects.filter(job_title__icontains='sales')
+        project_managers = Account.objects.filter(department__icontains='sales')
         for manager in project_managers:
             tempObject = {}
             tempObject['first_name'] = manager.first_name
@@ -527,6 +531,7 @@ def UniqueProjectNumber(request, pk):
         except:
             return JsonResponse({'error': 'Could not establish if project number was unique.'}, status=500)
 
+
 @csrf_exempt
 def UpdateBatch(request, pk):
     try:
@@ -542,6 +547,13 @@ def UpdateBatch(request, pk):
             sales_data['owner'] = Account.objects.get(id=sales_data['owner'])
 
             for field in project_data:
+                if(field == 'archived'):
+                    if(projectRecord.archived == False and project_data[field] == True):
+                        move_directory('archive', server_root, projectRecord)
+
+                    elif(projectRecord.archived == True and project_data[field] == False):
+                        move_directory('unarchive', server_root, projectRecord)
+
                 setattr(projectRecord, field, project_data[field])
 
             for field in sales_data:
@@ -606,6 +618,7 @@ def CreateProject(request):
 
         saleRecord = SalesOpp.objects.get(salesNumber=data["salesNumber"])
         owner = Account.objects.get(id = data["owner"])
+        creator = Account.objects.get(id = data["projectCreator"])
 
         if(data["projectNumber"][0] == 'P'):
             file_path = "PROJECTS\\" + data["projectNumber"] + "_" + saleRecord.clientName + "_" + saleRecord.projectName
@@ -628,8 +641,8 @@ def CreateProject(request):
             projectFilePath = file_path,
             owner = owner,
             projectType = data["projectType"],
-            projectCreator = owner,
-            projectedCompletionDate = date.today(),
+            projectCreator = creator,
+            projectedCompletionDate = data["projectedCompletionDate"],
         )
 
         newProject.save()
@@ -642,6 +655,15 @@ def CreateProject(request):
 
         temp_filepath = server_root+project_template_filepath
         create(res_names, temp_filepath, new_filepath)
+
+        if(owner != creator):
+                send_mail(
+                f"New Project Assignment - {newProject.projectNumber}",
+                f"Hi {owner.first_name},\n\n{creator.first_name} {creator.last_name} created a {newProject.projectType} project with the job number {newProject.projectNumber} and assigned it to you.\nPlease contact {creator.first_name} if you believe this project has been assigned out of error.\n\nThank you,\n{creator}\n\n\n\n\"Do Not contact this email address, this email server is not monitored for responses and only inteded to send out updates from within the Cornerstone Project Suite. For any questions about how this email was generated, please contact your system administrator.\"",
+                {settings.EMAIL_HOST_USER},
+                [owner], 
+                fail_silently=False,
+            )
 
         return JsonResponse({'newFilePath': file_path}, status=200)
 
@@ -732,9 +754,53 @@ def pinProject(request, pk):
         except:
             return JsonResponse({'message': 'Could not get assigned project list'}, status=500)
 
+@csrf_exempt
+def assignNotification(request):
+    if request.method == 'POST':
+        try:
+            data = JSONParser().parse(request)
+            sNumber = data['salesNumber'] 
+            userId = data['userId'] 
+            assignedUserId = data['assignedUserId'] 
+
+            sales = SalesOpp.objects.get(salesNumber = sNumber)
+            user = Account.objects.get(id = userId)
+            assignedUser = Account.objects.get(id = assignedUserId)
+
+            newAssignment = AssignedSale.objects.create(
+                owner = assignedUser,
+                salesRef = sales,
+            )
+
+            newAssignment.save()
+
+            send_mail(
+                f"Convert {sNumber} to a Project",
+                f"Hi {assignedUser.first_name},\n\n{user.first_name} {user.last_name} sent you a sales opportunity with the sales number {sNumber} to convert to project.\nPlease contact {user.first_name} to schedule a turn-over meeting.\n\nThank you,\n{user}\n\n\n\n\"Do Not contact this email address, this email server is not monitored for responses and only inteded to send out updates from within the Cornerstone Project Suite. For any questions about how this email was generated, please contact your system administrator.\"",
+                {settings.EMAIL_HOST_USER},
+                [assignedUser],
+                fail_silently=False,
+            )
 
 
+            return JsonResponse({'message': 'Assignment notification successfully sent'}, status=200)
 
+        except:
+            return JsonResponse({'message': 'Could not send assignment notification'}, status=500)
+
+@csrf_exempt
+def CheckAssignedSale(request, pk):
+    try:
+        assignedProjectList = AssignedSale.objects.filter(salesRef__salesNumber = pk)
+        serializer  = AssignedSalesSerializer(assignedProjectList, many=True)
+
+        if(assignedProjectList.count() > 0):
+            return JsonResponse({'assigned': True, 'list':serializer.data}, status=200)
+        else:
+            return JsonResponse({'assigned': False}, status=200)
+
+    except:
+        return JsonResponse({'message': 'Could Not Getted Pinned Project List'}, status=500)
 
 
 

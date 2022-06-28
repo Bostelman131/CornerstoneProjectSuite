@@ -7,11 +7,9 @@ import ConvertProject from './ConvertProject'
 
 const ProjectView = ({ activeUser, fontSize, textHeight, projectViewProject, projectViewSale, setProjectView, projectLinks, 
     salesLinks, pvProjectNumber, pvSalesNumber, handlePVSubmit, getProjectManagers, getSalesmen, handleProjectClick, 
-    projectOrSale, getAssignedProjects, projectManager, handleCPSubmit, isProjectNumberUnique, apiToken, pinnedProject, pinProject}) => {
+    projectOrSale, getAssignedProjects, projectManager, handleCPSubmit, isProjectNumberUnique, apiToken, pinnedProject, 
+    pinProject, assignSales, assignedSale, assignedSaleList}) => {
 
-
-
-    
 
     const generalDirections = "In order to convert a sales opportunity to a project, an updated booking sheet will need to be sent to accounting. The booking sheet from sales to modify is found at the 'Booking Sheet' link above, under 'Project Links'. If for some reason this link is not shown, please contact the responsible party displayed in the header. Once accounting responds with a project number and customer number, fill them in below along with the project type. Once all fields have been entered and validated, click on the submit button. This will trigger the folder structure to be created and the newly created project folder to be opened automatically. If for any reason this form doesn't work as intended, please contact your system administrator.";
 
@@ -66,6 +64,16 @@ const ProjectView = ({ activeUser, fontSize, textHeight, projectViewProject, pro
     const [ developmentProject, setDevelopmentProject ] = useState(false);
     const [ developmentSale, setDevelopmentSale] = useState(false);
 
+
+    const [ aLoading, setALoading ] = useState(false);
+    const [ aSubmitMessage, setASubmitMessage ] = useState("Please Wait... Sending Email Notification...");
+    const [ aSubmitError, setASubmitError ] = useState(false); 
+    const [ aSubmitSuccess, setASubmitSuccess ] = useState(false);
+
+    const [ assign, setAssign ] = useState(false);
+    const [ activeProjectManagers, setActiveProjectManagers ] = useState([]);
+    const [ selectedPM, setSelectedPM ] = useState(""); 
+
     try{
         if(projectViewProject.projectNumber === 'P9999999' && developmentProject === false){
             setDevelopmentProject(true);
@@ -83,8 +91,6 @@ const ProjectView = ({ activeUser, fontSize, textHeight, projectViewProject, pro
     catch{
         
     }
-
-
 
     if(saleSubmitted === false && projectViewSale.submitted === true){
         setSaleSubmitted(true);
@@ -208,6 +214,16 @@ const ProjectView = ({ activeUser, fontSize, textHeight, projectViewProject, pro
         css['--cpSubmitColor'] = 'black';
     }
 
+    if(aSubmitError){
+        css['--aSubmitColor'] = 'red';
+    }
+    if(aSubmitSuccess){
+        css['--aSubmitColor'] = 'green';
+    }
+    if(!aSubmitError && !aSubmitSuccess){
+        css['--aSubmitColor'] = 'black';
+    }
+
 
     const editClick = () => {
         if(buttonText == "Submit"){
@@ -268,25 +284,32 @@ const ProjectView = ({ activeUser, fontSize, textHeight, projectViewProject, pro
             setLoading(false);
             setMessage("Please Wait... Loading...");
           })
+    }    
+
+    const createDate = () => {
+        const d = new Date();
+        const date = d.getFullYear()+"-"+d.getMonth()+"-"+d.getDate();
+
+        return date;
     }
 
-    const checkProjectNumber = ( redirect, projectNumber, customerNumber, type, owner, setLoading, setMessage, setError, setSuccess ) => {  
-        if(projectNumber.length == 7){
+    const checkProjectNumber = ( redirect, projectNumber, customerNumber, type, owner, completeDate, setLoading, setMessage, setError, setSuccess ) => {  
+        if(projectNumber.length === 7 || type === "Warranty"){
             let newProjectNumber = ""
 
-            if(type == "Project"){
+            if(type === "Project"){
                 newProjectNumber = "P"+projectNumber
             }
-            if(type == "Warranty"){
-                newProjectNumber = "W"+projectNumber
+            if(type === "Warranty"){
+                newProjectNumber = "W"+projectViewProject['projectNumber'].substring(1)
             }
-            if(type == "Maintenance"){
+            if(type === "Maintenance"){
                 newProjectNumber = "M"+projectNumber
             }
 
             isProjectNumberUnique(apiToken,newProjectNumber).then(response => {
-                if(response.data.unique == true){                        
-                    handleCPSubmit( redirect, newProjectNumber, customerNumber, type, owner, setLoading, setMessage, setError, setSuccess, closeReassignWindow );
+                if(response.data.unique == true){
+                        handleCPSubmit( redirect, newProjectNumber, customerNumber, type, owner, completeDate, setLoading, setMessage, setError, setSuccess, closeReassignWindow );
                 }
                 else{
                     setErrorReport("Invalid Project Number... Please enter a unique 7 digit project number.", setError, setMessage, setLoading);
@@ -312,7 +335,7 @@ const ProjectView = ({ activeUser, fontSize, textHeight, projectViewProject, pro
     const handleConvertClick = () => {
         setCPLoading(true);
         if(checkCPFields(convertCustomerNumber)){
-            checkProjectNumber(true, convertProjectNumber,convertCustomerNumber, projectType, activeUser.id, setCPLoading, setCPSubmitMessage, setCPSubmitError, setCPSubmitSuccess);
+            checkProjectNumber(true, convertProjectNumber,convertCustomerNumber, projectType, activeUser.id, createDate(), setCPLoading, setCPSubmitMessage, setCPSubmitError, setCPSubmitSuccess);
         } 
     }
 
@@ -350,6 +373,7 @@ const ProjectView = ({ activeUser, fontSize, textHeight, projectViewProject, pro
         checkProjectNumber:checkProjectNumber,
         setErrorReport:setErrorReport,
         convertCustomerNumber:convertCustomerNumber,
+        createDate:createDate,
     }
 
     const handleSentClick = () => {
@@ -381,7 +405,34 @@ const ProjectView = ({ activeUser, fontSize, textHeight, projectViewProject, pro
         pinProject(projectViewProject['projectNumber'], setPSubmitMessage, setPSubmitError, setPSubmitSuccess, setPLoading)
     }
 
+    const handleAssignClick = () => {
+        setAssign(true);
+        getProjectManagers(setActiveProjectManagers);
+    }
 
+    const assignProject = () => {
+        setALoading(true);
+        setASubmitError(false);
+        setASubmitSuccess(false);
+        setASubmitMessage("Please Wait... Sending Email Notification...");
+
+        if(selectedPM === ""){
+            setASubmitError(true);
+            setASubmitMessage("Please Select a Project Manager and Re-Assign")
+        }
+        
+        assignSales(cancelAssign, projectViewProject['projectNumber'], activeUser.id, selectedPM, setALoading, setASubmitMessage, setASubmitError, setASubmitSuccess);
+    }
+
+    const cancelAssign = () => {
+        setASubmitMessage("Please Wait... Sending Email Notification...");
+        setALoading(false);
+        setAssign(false);
+    }
+
+    const handlePMChange = (value) => {
+        setSelectedPM(value);
+    }
     
     return (
         <>
@@ -404,13 +455,13 @@ const ProjectView = ({ activeUser, fontSize, textHeight, projectViewProject, pro
                 </div>
 
                 <div className='PV-Header-UserPanel'>
-                {   editable =='false' &&
+                    {   editable =='false' &&
                         <UserPanel user={projectOwner} maxHeight={80}/>
                     }
-                    {   editable =='true' && !activeUser.is_admin &&
+                    {/* {   editable =='true' && !activeUser.is_admin &&
                         <UserPanel user={projectOwner} maxHeight={80}/>
-                    }
-                    {   editable =='true'  && activeUser.is_admin &&
+                    } */}
+                    {   editable =='true'  && 
                         <DropDownSelector defaultValue={projectViewProject.owner_id} providedArray={projectManagers} setSelectionFunction={setSelectedProjectManager} />
                     }
                 </div>
@@ -473,6 +524,18 @@ const ProjectView = ({ activeUser, fontSize, textHeight, projectViewProject, pro
 
                                         {   editable == 'true' &&
                                             <input type='checkbox' checked={saleSubmitted} onChange={e => handleSentClick()}/>
+                                        }
+                                        <label>Sent to Project Manager:</label>
+                                        {   assignedSale && 
+                                                assignedSaleList.map((assignedObject, key) => {
+                                                    return(
+                                                        <label className='PVS-Text-Primary'>Submitted to {assignedObject.first_name} {assignedObject.last_name} on {convertDate(assignedObject.assignedDate)}</label>
+                                                    )
+                                                })
+                                            
+                                        }
+                                        {   !assignedSale && 
+                                            <label className='PVS-Text-Primary'>No</label>
                                         }
                                     </div>
                                 </>
@@ -595,9 +658,34 @@ const ProjectView = ({ activeUser, fontSize, textHeight, projectViewProject, pro
                             <label className='PV-Header-Title'>Assigned Projects</label>
                         </div>
 
-                        {/* {   owner &&
-                            <div>Turn-over to Project Manager</div>
-                        } */}
+                        {   owner &&
+                            <div className='PVS-Turnover-Window'>
+
+                                {   !assign &&
+                                    <button  className='PVS-Turnover-Button' onClick={e => handleAssignClick()}>Assign Project</button>
+                                }
+                                
+                                { assign &&
+                                <>
+                                    <select id="PV-Project-Type" className='PVS-Turnover-Input' onChange={ e => {handlePMChange(e.target.value)}} >
+                                        <option value={""}>{" "}</option>
+                                        {   
+                                            activeProjectManagers.map((projectManager, key) => {
+                                                return(
+                                                    <option key={key} value={projectManager.id}>{projectManager.first_name + " " + projectManager.last_name}</option>
+                                                )
+                                            })
+                                        }
+                                    </select>
+                                    <button  className='PVS-Turnover-Button' onClick={e => assignProject()}>Assign</button>
+                                    <button  className='PVS-Turnover-Button-Cancel' onClick={e => cancelAssign()}>Cancel</button>
+                                    {   aLoading &&
+                                        <div style={css} className='PVS-Turnover-Message'>{aSubmitMessage}</div>
+                                    }
+                                </>
+                                }
+                            </div>
+                        }
 
                         {
                             assignedProjects.map((project, key) => {
@@ -629,7 +717,6 @@ const ProjectView = ({ activeUser, fontSize, textHeight, projectViewProject, pro
                             <select id="PV-Project-Type" className='PV-Convert-Input' onChange={ e => {handleTypeChange(e.target.value)}} >
                                 <option value="Project">Project</option>
                                 <option value="Maintenance">Maintenance</option>
-                                <option value="Warranty">Warranty</option>
                             </select>
                             {/* <input className='PV-Convert-Input' placeholder='Please Enter the Project Type...' onChange={e => {setConvertProjectType(e.target.value)}}/> */}
                             { cpLoading &&

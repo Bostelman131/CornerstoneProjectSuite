@@ -38,7 +38,7 @@ const OfficeInformation = ( { header, address, internetUsername, internetPasswor
 
             <div className='OI-Right-Pane'>
                 <div className='OI-Phone-List'>
-                    <img src={phone} className="Phone-List" alt="Cornerstone Wifi" />
+                    <img src={phone} className="Phone-List" alt="Cornerstone Phone List" />
                 </div>
             </div>
 

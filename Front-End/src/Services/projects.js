@@ -36,6 +36,34 @@ class projectDataService{
         return axios.get( `${API_URL}projects/${projectNumber}/` );
     }
 
+    createProject(token, newProjectObject){
+        const JSONProjectObject = JSON.stringify(newProjectObject);
+
+        axios.defaults.headers.common["Authorization"] = "token" + token;
+        return axios.post( `${API_URL}createProject/`, JSONProjectObject);
+    }
+
+    updateProject(projectNumber, newProjectObject, newSaleObject, token){
+
+        const tempObject = {
+            'projects':newProjectObject,
+            'sales':newSaleObject
+        };
+
+        const JSONProjectObject = JSON.stringify(tempObject);
+
+        axios.defaults.headers.common["Authorization"] = "token" + token;
+        return axios.put(`${API_URL}update/${projectNumber}/`, JSONProjectObject);
+    }
+
+    getAssignedProjects(token, projectNumber) {
+        axios.defaults.headers.common["Authorization"] = "token" + token;
+        return axios.get( `${API_URL}getAssigned/${projectNumber}/` );
+    }
+
+
+
+
     getLinkList(token,linkObject) {
         const JSONLinkObject = JSON.stringify(linkObject);
 
@@ -48,6 +76,15 @@ class projectDataService{
         axios.defaults.headers.common["Authorization"] = "token" + token;
         return axios.get( `${API_URL}projects/unique/${projectNumber}/` );
     }
+
+
+    checkAssignedSale( token, projectNumber ) {
+
+        axios.defaults.headers.common["Authorization"] = "token" + token;
+        return axios.post( `${API_URL}checkAssigned/${projectNumber}/`);
+    }
+
+
 
     getPinnedSales(token, userID) {
         axios.defaults.headers.common["Authorization"] = "token" + token;
@@ -80,14 +117,6 @@ class projectDataService{
 
         axios.defaults.headers.common["Authorization"] = "token" + token;
         return axios.post( `${API_URL}checkPinned/${userID}/`, JSONProjectNumberObject );
-    }
-
-
-
-
-    getAssignedProjects(token, projectNumber) {
-        axios.defaults.headers.common["Authorization"] = "token" + token;
-        return axios.get( `${API_URL}getAssigned/${projectNumber}/` );
     }
 
     getPinnedProjects(token, userId) {
@@ -144,25 +173,6 @@ class projectDataService{
 
 
 
-    createProject(token, newProjectObject){
-        const JSONProjectObject = JSON.stringify(newProjectObject);
-
-        axios.defaults.headers.common["Authorization"] = "token" + token;
-        return axios.post( `${API_URL}createProject/`, JSONProjectObject);
-    }
-
-    updateProject(projectNumber, newProjectObject, newSaleObject, token){
-
-        const tempObject = {
-            'projects':newProjectObject,
-            'sales':newSaleObject
-        };
-
-        const JSONProjectObject = JSON.stringify(tempObject);
-
-        axios.defaults.headers.common["Authorization"] = "token" + token;
-        return axios.put(`${API_URL}update/${projectNumber}/`, JSONProjectObject);
-    }
 
 
     deleteProject(projectNumber, token){

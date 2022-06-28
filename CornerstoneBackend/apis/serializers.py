@@ -1,7 +1,6 @@
 from rest_framework import serializers
-from PIL import Image
 
-from .models import PinnedSales, SalesOpp, Project, PinnedProject
+from .models import PinnedSales, SalesOpp, Project, PinnedProject, AssignedSale
 
 class SalesSerializer(serializers.ModelSerializer):
     archived = False
@@ -51,26 +50,29 @@ class PinnedSalesSerializer(serializers.ModelSerializer):
         model = PinnedSales
         fields = '__all__'
 
+class AssignedSalesSerializer(serializers.ModelSerializer):
+    first_name = serializers.CharField(source = 'owner.first_name')
+    last_name = serializers.CharField(source = 'owner.last_name')
+
+    class Meta:
+        model = AssignedSale
+        fields = '__all__'
+
 class ProjectsPinnedSerializer(serializers.ModelSerializer):
-    try:
-        projectNumber = serializers.CharField(source = 'project.projectNumber')
-        clientName = serializers.CharField(source = 'project.salesLink.clientName')
-        projectName = serializers.CharField(source = 'project.salesLink.projectName')
-        archived = serializers.CharField(source = 'project.archived')
-        watchList = serializers.CharField(source = 'project.watchList')
-        projectCreationDate = serializers.DateTimeField(source = 'project.projectCreationDate')
-        first_name = serializers.CharField(source = 'project.owner.first_name')
-        last_name = serializers.CharField(source = 'project.owner.last_name')
-        jobTitle = serializers.CharField(source = 'project.owner.job_title')
-        profile_picture = serializers.ImageField(source = 'project.owner.profile_picture')
-        file_path = serializers.CharField(source = 'project.projectFilePath')
-        sales_number = serializers.CharField(source = 'project.salesLink.salesNumber')
-        sage_number = serializers.CharField(source = 'project.customerID')
-        owner_id = serializers.IntegerField(source = 'project.owner.id')
-
-    except:
-        pass
-
+    projectNumber = serializers.CharField(source = 'project.projectNumber')
+    clientName = serializers.CharField(source = 'project.salesLink.clientName')
+    projectName = serializers.CharField(source = 'project.salesLink.projectName')
+    archived = serializers.CharField(source = 'project.archived')
+    watchList = serializers.CharField(source = 'project.watchList')
+    projectCreationDate = serializers.DateTimeField(source = 'project.projectCreationDate')
+    first_name = serializers.CharField(source = 'project.owner.first_name')
+    last_name = serializers.CharField(source = 'project.owner.last_name')
+    jobTitle = serializers.CharField(source = 'project.owner.job_title')
+    profile_picture = serializers.ImageField(source = 'project.owner.profile_picture')
+    file_path = serializers.CharField(source = 'project.projectFilePath')
+    sales_number = serializers.CharField(source = 'project.salesLink.salesNumber')
+    sage_number = serializers.CharField(source = 'project.customerID')
+    owner_id = serializers.IntegerField(source = 'project.owner.id')
 
     class Meta:
         model = Project

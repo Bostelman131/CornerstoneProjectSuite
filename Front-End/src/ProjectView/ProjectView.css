@@ -299,6 +299,45 @@ div {
   margin-bottom: 150px;
 }
 
+.PVS-Turnover-Window {
+  display: flex;
+  flex-direction: row;
+  margin: 20px 45px;
+}
+
+.PVS-Turnover-Button {
+  background-color: #32584F;
+  color: white;
+  padding: 5px;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.PVS-Turnover-Button:hover {
+  background-color: #45796d;
+  cursor: pointer;
+}
+
+.PVS-Turnover-Button-Cancel {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.PVS-Turnover-Button-Cancel:hover {
+  cursor: pointer;
+}
+
+.PVS-Turnover-Message {
+  font-size: 16px;
+  color: var(--aSubmitColor);
+}
+
+.PVS-Turnover-Input {
+  width:30%;
+  padding: 5px;
+  margin-right: 25px;
+}
+
 .PVS-Assigned-Project-Container {
   display: flex;
   flex-direction: row;

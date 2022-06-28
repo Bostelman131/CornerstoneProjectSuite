@@ -55,6 +55,11 @@
     color: red;
 }
 
+.SF-Message {
+    font-size: 15px;
+    color: var(--submitMessage);
+}
+
 .SF-Button-Group {
     margin-top: 10px;
 }

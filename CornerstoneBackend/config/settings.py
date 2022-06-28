@@ -169,3 +169,12 @@ CORS_ALLOWED_ORIGINS = (
 # ]
 
 # CSRF_TRUSTED_ORIGINS = [env.str("CSRF_TRUSTED_ORIGINS")]
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = env.str("EMAIL_HOST")
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = env.str("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = env.str("EMAIL_HOST_PASSWORD")
+DEFAULT_FROM_EMAIL = 'default from email'

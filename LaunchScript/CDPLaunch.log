@@ -1,0 +1,53 @@
+Performing system checks...
+
+System check identified no issues (0 silenced).
+May 25, 2022 - 07:38:02
+Django version 4.0.3, using settings 'config.settings'
+Starting development server at http://0.0.0.0:7000/
+Quit the server with CTRL-BREAK.
+C:\Software\CornerstoneSuite\LaunchScript\CDPLaunch.ps1 : File C:\Software\CornerstoneSuite\LaunchScript\CDPLaunch.ps1 
+cannot be loaded because running scripts is disabled on this system. For more information, see 
+about_Execution_Policies at https:/go.microsoft.com/fwlink/?LinkID=135170.
+At line:1 char:1
++ C:\Software\CornerstoneSuite\LaunchScript\CDPLaunch.ps1
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : SecurityError: (:) [], PSSecurityException
+    + FullyQualifiedErrorId : UnauthorizedAccess
+C:\Software\CornerstoneSuite\LaunchScript\CDPLaunch.ps1 : File C:\Software\CornerstoneSuite\LaunchScript\CDPLaunch.ps1 
+cannot be loaded because running scripts is disabled on this system. For more information, see 
+about_Execution_Policies at https:/go.microsoft.com/fwlink/?LinkID=135170.
+At line:1 char:1
++ C:\Software\CornerstoneSuite\LaunchScript\CDPLaunch.ps1
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : SecurityError: (:) [], PSSecurityException
+    + FullyQualifiedErrorId : UnauthorizedAccess
+C:\Software\CornerstoneSuite\LaunchScript\CDPLaunch.ps1 : File C:\Software\CornerstoneSuite\LaunchScript\CDPLaunch.ps1 
+cannot be loaded because running scripts is disabled on this system. For more information, see 
+about_Execution_Policies at https:/go.microsoft.com/fwlink/?LinkID=135170.
+At line:1 char:1
++ C:\Software\CornerstoneSuite\LaunchScript\CDPLaunch.ps1
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : SecurityError: (:) [], PSSecurityException
+    + FullyQualifiedErrorId : UnauthorizedAccess
+C:\Software\CornerstoneSuite\LaunchScript\CDPLaunch.ps1 : File C:\Software\CornerstoneSuite\LaunchScript\CDPLaunch.ps1 
+cannot be loaded because running scripts is disabled on this system. For more information, see 
+about_Execution_Policies at https:/go.microsoft.com/fwlink/?LinkID=135170.
+At line:1 char:1
++ C:\Software\CornerstoneSuite\LaunchScript\CDPLaunch.ps1
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : SecurityError: (:) [], PSSecurityException
+    + FullyQualifiedErrorId : UnauthorizedAccess
+Performing system checks...
+
+System check identified no issues (0 silenced).
+June 15, 2022 - 10:05:47
+Django version 4.0.3, using settings 'config.settings'
+Starting development server at http://0.0.0.0:7000/
+Quit the server with CTRL-BREAK.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+June 23, 2022 - 10:04:00
+Django version 4.0.3, using settings 'config.settings'
+Starting development server at http://0.0.0.0:7000/
+Quit the server with CTRL-BREAK.

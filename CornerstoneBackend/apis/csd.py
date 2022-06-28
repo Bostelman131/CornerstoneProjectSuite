@@ -4,6 +4,7 @@ import shutil
 def create(res_names, temp_filepath, new_filepath):
     shutil.copytree(temp_filepath,new_filepath)
     rename(new_filepath, res_names)
+    os.chdir('C:\\')
 
 def individual_rename(file_path, file_name_extension,res_names):
 

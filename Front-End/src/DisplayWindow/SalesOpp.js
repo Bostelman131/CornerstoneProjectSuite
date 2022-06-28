@@ -2,9 +2,27 @@ import './SalesOpp.css';
 import { useState } from 'react'
 
 function SalesOpp({SalesFormObject, user, salesFormTextHeight, salesFormTextAreaHeight, homeView, salesDirections, token, createSales,getAll}) {
+
+    const [ loading, setLoading ] = useState(false);
+    const [ submitMessage, setSubmitMessage ] = useState("Please Wait... Creating Sales Opportunity...");
+    const [ submitError, setSubmitError ] = useState(false); 
+    const [ submitSuccess, setSubmitSuccess ] = useState(false);
+    
     let cssProps = { }
     cssProps['--inputHeight'] = salesFormTextHeight;
     cssProps['--inputAreaHeight'] = salesFormTextAreaHeight;
+
+    if(submitError){
+        cssProps['--submitMessage'] = 'red';
+    }
+    else if(submitSuccess){
+        cssProps['--submitMessage'] = 'green';
+    }
+    else{
+        cssProps['--submitMessage'] = 'black';
+    }
+
+    const sleep = ms => new Promise(r => setTimeout(r, ms));
 
     const cancelForm = () => {
         homeView();
@@ -14,7 +32,10 @@ function SalesOpp({SalesFormObject, user, salesFormTextHeight, salesFormTextArea
     const [ missingElements, setMissingElements ] = useState([])
 
     const handleSubmit = () => {
-        setFormError(false);
+        setLoading(true);
+        setSubmitError(false);
+        setSubmitSuccess(false);
+
         let missingFields = [];
 
         SalesFormObject.map((object, key) => {
@@ -26,14 +47,35 @@ function SalesOpp({SalesFormObject, user, salesFormTextHeight, salesFormTextArea
 
         if(missingFields.length <= 0){
             createSales(token,user.id, SalesFormObject).then(response => {
-                getAll();
-                homeView();
-                window.open('localexplorer:'+user.base_url+response.data['salesFilePath']);
-            })
+                console.log(response.status)
+                if(response.status === 201){
+                    setSubmitSuccess(true);
+                    setSubmitMessage("Successfully Created a Sales Opportunity... Redirecting Soon...");
+
+                }
+                else{
+                    setSubmitError(true);
+                    setSubmitMessage("Failed to Create the Sales Opportunity... If this issue persists, please contact your system admin.");
+                }
+
+                sleep(2000).then( res => {
+                    setLoading(false);
+                    setSubmitMessage("Please Wait... Creating Sales Opportunity...");
+                    getAll();
+                    homeView();
+                    window.open('localexplorer:'+user.base_url+response.data['salesFilePath']);
+                });
+
+            });
         }
         else{
-            setFormError(true);
-            setMissingElements(missingFields);
+            setSubmitError(true);
+            setSubmitMessage("Please enter all fields to create a sales opportunity.");
+
+            sleep(2000).then( res => {
+                setLoading(false);
+                setSubmitMessage("Please Wait... Creating Sales Opportunity...");
+            });
         }
     }
 
@@ -71,11 +113,13 @@ function SalesOpp({SalesFormObject, user, salesFormTextHeight, salesFormTextArea
                         </div>
                 )}
 
-                {
-                    formError &&
+                {   formError &&
                     <label className='SF-Error'>
                         Please Enter {missingElements[0]} and Resubmit
                     </label>
+                }
+                {   loading && 
+                    <div style={cssProps} className='SF-Message'>{submitMessage}</div>
                 }
 
                 <div className='SF-Button-Group'>
@@ -97,11 +141,10 @@ function SalesOpp({SalesFormObject, user, salesFormTextHeight, salesFormTextArea
                     <label className='SD-Title'>Form Link to Share</label>
                     <p>https://forms.gle/oebg22BTUD5s2Rbg8</p>
 
-                    <div className='SalesOpp-Upload-Portal'>
+                    {/* <div className='SalesOpp-Upload-Portal'>
                         <label className='SD-Title'>Drag & Drop Quick Create</label>
-                        {/* <input type='file'/> */}
                         <p>Coming Soon!</p>
-                    </div>
+                    </div> */}
 
                 </div>
             </div>

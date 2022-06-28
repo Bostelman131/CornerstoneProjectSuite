@@ -159,10 +159,18 @@ function App() {
     setSelectedNav('Dashboard');
   }
 
-  useEffect (()=> {   // IF SELECTED NAV CHANGES, GET ALL IS CALLED
-    getAll();
+  useEffect (()=> {   // IF SELECTED NAV CHANGES, CHECK TO DETERMINE WHAT NAV IS SELECTED AND UPDATE ACCORDINGLY. 'DASHBOARD' & 'ARCHIVED PROJECTS' HANDLED IN GETALL() 
+    if(selectedNav === 'Pinned Projects'){
+      resetSearches();
+      getPinnedProjects();
+      getPinnedSales();
+    }
+    else{
+      getAll();
+    }
 
   }, [selectedNav])
+
 
 
 // PROJECTS - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -207,7 +215,7 @@ function App() {
 
   function getAll() {   // CHECK FOR SEARCHES - IF TRUE - RESET SEARCHES FETCHES PROJECTS  - FALSE - CALL TO GET THEM
     setSearchTerms(false);
-    if(checkSearches() && selectedNav != 'Pinned Projects'){  
+    if(checkSearches()){  
       setProjects([]);
       resetSearches();
     }
@@ -222,6 +230,7 @@ function App() {
           setSales([]);
         }
         else if(selectedNav === 'Pinned Projects'){
+          resetSearches();
           getPinnedProjects();
           getPinnedSales();
         }
@@ -355,9 +364,6 @@ function App() {
   }
 
   useEffect (() => {  // FILTER PROJECTS BASED ON SEARCH TERMS - UPDATES ON INPUT CHANGE TO SEARCH FIELDS LISTED
-    setResults([]);
-    setSearchTerms(checkSearches());
-
     const searchObject = {
       "projectNumber": projectNumber,
       "clientName":clientName,
@@ -370,6 +376,9 @@ function App() {
     }
 
     if(selectedNav === 'Dashboard'){
+      setResults([]);
+      setSearchTerms(checkSearches());
+
       searchObject["archived"] = false;
       try{
         getFilteredProject(searchObject);
@@ -381,6 +390,9 @@ function App() {
     }
     
     if(selectedNav === 'Archived Projects'){
+      setResults([]);
+      setSearchTerms(checkSearches());
+
       searchObject["archived"] = true;
       try{
         getFilteredProject(searchObject);
@@ -464,6 +476,31 @@ const pinProject = async ( projectNumber, setMessage, setError, setSuccess, setL
 }
 
 
+
+// ASSIGNED SALE - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+const [ assignedSale, setAssignedSale ] = useState(false);
+const [ assignedSaleList, setAssignedSaleList ] = useState([]);
+
+const checkAssignedSale = async ( projectNumber ) => {
+  setAssignedSale(false);
+  setAssignedSaleList([]);
+  
+  projectDataService.checkAssignedSale(apiToken, projectNumber)
+  .then((response) => {
+
+    if(response.status === 200){
+      setAssignedSale(response.data["assigned"]);
+      if(response.data["assigned"] === true){
+        setAssignedSaleList(response.data["list"])
+      }
+    }
+
+    else{
+      console.log("Failed to Check Assigned Sale")
+    }
+  })
+}
 
 
 
@@ -627,13 +664,15 @@ const pinProject = async ( projectNumber, setMessage, setError, setSuccess, setL
 
   }
 
-  const handleCPSubmit = async ( redirect, projectNumber, customerNumber, type, owner, setLoading, setMessage, setError, setSuccess, closeReassignWindow ) => {  // CREATES A NEW PROJECT WHEN 'CONVERT TO PROJECT' FORM WITHIN PROJECT VIEW IS SUBMITTED
+  const handleCPSubmit = async ( redirect, projectNumber, customerNumber, type, owner, completeDate, setLoading, setMessage, setError, setSuccess, closeReassignWindow ) => {  // CREATES A NEW PROJECT WHEN 'CONVERT TO PROJECT' FORM WITHIN PROJECT VIEW IS SUBMITTED  
     const tempNewProjectObject = {
       'salesNumber' : pvSalesNumber,
       'projectNumber' : projectNumber,
       'customerID' : customerNumber,
       'projectType' : type,
       'owner' : owner,
+      'projectedCompletionDate':completeDate,
+      'projectCreator':activeUser.id,
     }
 
     projectDataService.createProject(apiToken, tempNewProjectObject).then(response => {
@@ -686,7 +725,7 @@ const pinProject = async ( projectNumber, setMessage, setError, setSuccess, setL
     .then( response => {
       setFunction(response.data);
   })
-  }
+  } 
 
   const getProjectManagers = async (setToFunction) => {   // LIST OF ALL PROJECT MANAGERS IN SYSTEM AND SETS TO 'setToFunction'
     userDataService.getProjectManagers(apiToken).then( response => {
@@ -725,6 +764,7 @@ const pinProject = async ( projectNumber, setMessage, setError, setSuccess, setL
       }
 
       else{
+        checkAssignedSale(projectNumber);
         setProjectOrSale("sale")
         getSaleView(projectNumber)
         .then( function() {
@@ -736,6 +776,28 @@ const pinProject = async ( projectNumber, setMessage, setError, setSuccess, setL
         })
       }
     }
+  }
+
+  const assignSales = async (cancelAssign, salesNumber, userId, assignedUserId, setLoading, setMessage, setError, setSuccess) => {
+    userDataService.sendNotification(apiToken, salesNumber, userId, assignedUserId)
+    .then(response => {
+      console.log(response.status)
+      if(response.status === 200){
+        setSuccess(true);
+        setMessage("Email Notification successfully sent.");
+      }
+      else{
+        setError(true);
+        const message = response.data
+        setMessage(message);
+      }
+      sleep(1500).then( res => {
+        setLoading(false);
+        setError(false);
+        setSuccess(false);
+        cancelAssign();
+      })
+    })
   }
 
   const projectViewProps = { // PROPS - PROJECT VIEW  <----------------------------------------
@@ -761,6 +823,10 @@ const pinProject = async ( projectNumber, setMessage, setError, setSuccess, setL
     apiToken: apiToken,
     pinnedProject:pinnedProject,
     pinProject:pinProject,
+    assignSales:assignSales,
+    assignedSale:assignedSale,
+    assignedSaleList:assignedSaleList,
+
   }
 
   useEffect (() => {    // IF 'projectViewSale' CHANGES UPDATE LINKS AND 'pvSalesNumber'
@@ -1300,7 +1366,6 @@ const pinProject = async ( projectNumber, setMessage, setError, setSuccess, setL
     );
 
   }
-
 }
 
 export default App;

@@ -189,6 +189,20 @@ class userDataService{
         axios.defaults.headers.common["Authorization"] = "token" + token;
         return axios.get(`${API_URL}salesmen/`);
     }
+
+    sendNotification(token, salesNumber, userId, assignedUserId) {
+        const assignObject = {
+            'salesNumber':salesNumber,
+            'userId':userId,
+            'assignedUserId':assignedUserId,
+
+        }
+
+        const JSONAssignObject = JSON.stringify(assignObject);
+
+        axios.defaults.headers.common["Authorization"] = "token" + token;
+        return axios.post(`${API_URL}assignNotification/`, JSONAssignObject);
+    }
 }
 
 export default new userDataService();

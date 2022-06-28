@@ -1,10 +1,14 @@
 import './ConvertProject.css'
 import { useState } from 'react';
 
-const ConvertProject = ( { handleConvertClick, projectManagers, closeReassignWindow, checkProjectNumber, setErrorReport, convertCustomerNumber } ) => {
+const ConvertProject = ( { handleConvertClick, projectManagers, closeReassignWindow, checkProjectNumber, setErrorReport, convertCustomerNumber, createDate } ) => {
     const [ projectNumber, setProjectNumber ] = useState("");
     const [ projectType, setProjectType] = useState("");
     const [ projectOwner, setProjectOwner ] = useState("");
+    const [ warrantyDate, setWarrantyDate ] = useState("");
+
+    const [ needProjectNumber, setNeedProjectNumber ] = useState(false);
+    const [ needDate, setNeedDate ] = useState(false);
 
     const [ reassignMessage, setReassignMessage ] = useState("Please Wait... Loading...")
     const [ reassignLoading, setReassignLoading ] = useState(false);
@@ -24,35 +28,61 @@ const ConvertProject = ( { handleConvertClick, projectManagers, closeReassignWin
         css['--submitColor'] = 'black';
     }
 
+
+    if(needProjectNumber === false && projectType === 'Maintenance'){
+        setNeedProjectNumber(true);
+    }
+    if(needProjectNumber === true && projectType != 'Maintenance'){
+        setNeedProjectNumber(false);
+    }
+
+    if(needDate === false && projectType === 'Warranty'){
+        setNeedDate(true);
+    }
+    if(needDate === true && projectType != 'Warranty'){
+        setNeedDate(false);
+    }
+
+
+
     const checkFields = () => {
-        if(projectNumber.length == 7){
-            if(projectType != ""){
-                if(projectOwner != ""){
-                    return true;
-                }
-                else{
-                    setErrorReport("Please Select a Project Owner.", setReassignError, setReassignMessage, setReassignLoading);
-                    return false;
-                }
-            }
-            else{
-                setErrorReport("Please Select a Project Type.", setReassignError, setReassignMessage, setReassignLoading);
+    
+        if(projectType === 'Warranty'){
+            if(warrantyDate === ""){
+                setErrorReport("Invalid Warranty Date... Please enter a valid date in the future.", setReassignError, setReassignMessage, setReassignLoading);
                 return false;
             }
         }
-        else{
-            setErrorReport("Invalid Project Number... Please enter a 7 digit project number.", setReassignError, setReassignMessage, setReassignLoading);
+
+        if(projectType === ""){
+            setErrorReport("Please Select a Project Type.", setReassignError, setReassignMessage, setReassignLoading);
             return false;
         }
+
+        if(projectOwner === ""){
+            setErrorReport("Please Select a Project Owner.", setReassignError, setReassignMessage, setReassignLoading);
+            return false;
+        }
+
+
+        return true;
+
+
     }
 
     const handleSubmit = () => {
         setReassignLoading(true);
 
         if(checkFields()){
-            checkProjectNumber( false, projectNumber, convertCustomerNumber, projectType, projectOwner, setReassignLoading, setReassignMessage, setReassignError, setReassignSuccess );
+            if(projectType === 'Warranty'){
+                checkProjectNumber( false, projectNumber, convertCustomerNumber, projectType, projectOwner, warrantyDate, setReassignLoading, setReassignMessage, setReassignError, setReassignSuccess );
+            }
+            else{
+                checkProjectNumber( false, projectNumber, convertCustomerNumber, projectType, projectOwner, createDate() , setReassignLoading, setReassignMessage, setReassignError, setReassignSuccess );
+            }
         }
     }
+
 
     return (
         <div style={css} className='PV-Reassign-Window'>
@@ -70,12 +100,20 @@ const ConvertProject = ( { handleConvertClick, projectManagers, closeReassignWin
 
             <div className='PV-Reassign-Container'>
                 <div className='PV-Reassign-Form'>
-                    <input className='PV-Reassign-Input' maxLength={7} placeholder='Please Enter a Project Number...' onChange={e => {setProjectNumber(e.target.value)}}/>
                     <select id="PV-Reassign-Type" className='PV-Reassign-Input' onChange={ e => {setProjectType(e.target.value)}} >
                         <option value="">Project Type</option>
                         <option value="Maintenance">Maintenance</option>
                         <option value="Warranty">Warranty</option>
                     </select>
+                    {   needProjectNumber &&
+                        <input className='PV-Reassign-Input' maxLength={7} placeholder='Please Enter a Project Number...' onChange={e => {setProjectNumber(e.target.value)}}/>
+                    }
+                    {   needDate &&
+                        <>
+                            <label>Warranty End Date</label>
+                            <input className='PV-Reassign-Input' type="date" maxLength={7} placeholder='Please Enter a Project Number...' onChange={e => {setWarrantyDate(e.target.value)}}/>
+                        </>
+                    }
                     <select id="PV-Reassign-Owner" className='PV-Reassign-Input' onChange={ e => {setProjectOwner(e.target.value)}} >
                         <option value="">Project Owner</option>
                         {

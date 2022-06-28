@@ -27,7 +27,6 @@ class SalesOpp(models.Model):
     def __str__ (self):
         return self.salesNumber + '_' + self.clientName + '_' + self.projectName
 
-
 class Project(models.Model):
     projectNumber = models.CharField(max_length=8, primary_key=True)
     salesLink = models.ForeignKey(SalesOpp,on_delete=models.PROTECT)
@@ -76,7 +75,6 @@ class Project(models.Model):
     def sales_filepath(self):
         return self.salesLink.salesFilePath
 
-
 class PinnedProject(models.Model):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.PROTECT)
     project = models.ForeignKey('Project', on_delete=models.PROTECT)
@@ -86,3 +84,8 @@ class PinnedSales(models.Model):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.PROTECT)
     salesOpp = models.ForeignKey('SalesOpp', on_delete=models.PROTECT)
     projectPinDate = models.DateTimeField(auto_now_add=True)
+
+class AssignedSale(models.Model):
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.PROTECT)
+    salesRef = models.ForeignKey('SalesOpp', on_delete=models.PROTECT)
+    assignedDate = models.DateTimeField(auto_now_add=True)

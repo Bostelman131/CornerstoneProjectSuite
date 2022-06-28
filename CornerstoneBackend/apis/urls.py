@@ -5,7 +5,7 @@ from .views import pinProject, CheckPinnedView, PinnedProjectView, PinnedSalesVi
 from .views import DetailAccount,ChangePassword,UploadView
 from .views import SalesApiView,DetailSale,PostSalesOpp, SalesView
 from .views import login, signup
-from .views import linkList, UniqueProjectNumber,getProjectManagers,getSalesmen,UpdateBatch,getAssignedProjects
+from .views import linkList, UniqueProjectNumber,getProjectManagers,getSalesmen,UpdateBatch,getAssignedProjects, assignNotification, CheckAssignedSale
 
 urlpatterns = [
     
@@ -33,6 +33,8 @@ urlpatterns = [
     path('links/', linkList),
     path('update/<pk>/', UpdateBatch),
     path('getAssigned/<pk>/',getAssignedProjects),
+    path('assignNotification/',assignNotification),
+    path('checkAssigned/<pk>/', CheckAssignedSale),
 
     path('pin/<pk>/', pinProject),
     path('checkPinned/<pk>/', CheckPinnedView),
