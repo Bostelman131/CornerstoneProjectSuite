@@ -439,6 +439,8 @@ def signup(request):
         except IntegrityError:
             return JsonResponse({ 'error' : 'An error occurred while saving the user'}, status=400)
 
+
+
 # ALLOWS A USER TO LOGIN
 @csrf_exempt
 def login(request):

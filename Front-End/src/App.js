@@ -1282,6 +1282,7 @@ const checkAssignedSale = async ( projectNumber ) => {
   }
 
 // OFFICE INFORMATION - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   const officeInformation = {
     header: "Cornerstone Detention Products - Garner Branch",
     address: "621 Poole Dr. Garner, NC 27529",
@@ -1328,10 +1329,9 @@ const checkAssignedSale = async ( projectNumber ) => {
     }
 
 
-
 // RENDERING APP - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  if(apiToken == null ){  // IF NO TOKEN IS FOUND PROMPT LOGIN
+  if(apiToken == null){  // IF NO TOKEN IS FOUND PROMPT LOGIN
     return (
       <div className="App">
         <LoginWindow {...loginProps} />
@@ -1340,7 +1340,6 @@ const checkAssignedSale = async ( projectNumber ) => {
   }
 
   else{   // LOGIN TOKEN FOUND AND RENDER APP
-
     return (
       <div className="App">
 

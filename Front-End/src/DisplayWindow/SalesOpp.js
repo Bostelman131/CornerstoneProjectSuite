@@ -31,6 +31,26 @@ function SalesOpp({SalesFormObject, user, salesFormTextHeight, salesFormTextArea
     const [ formError, setFormError ] = useState(false)
     const [ missingElements, setMissingElements ] = useState([])
 
+    const setSalesError = (str) => {
+        setSubmitError(true);
+        setSubmitMessage(str);
+    }
+
+    const fadeFormMessage = () => {
+        sleep(2000).then( res => {
+            setLoading(false);
+            setSubmitMessage("Please Wait... Creating Sales Opportunity...");
+        });
+    }
+
+    const checkSpecialChar = (str) => {
+        if(/[~`!#$%\^&*+=\-\[\]\\';,/{}|\\":<>\?]/g.test(str)) {
+            return true;
+        }
+
+        return false;
+    }
+
     const handleSubmit = () => {
         setLoading(true);
         setSubmitError(false);
@@ -39,43 +59,44 @@ function SalesOpp({SalesFormObject, user, salesFormTextHeight, salesFormTextArea
         let missingFields = [];
 
         SalesFormObject.map((object, key) => {
-
             if(object["value"] == ""){
                 missingFields.push(object["name"]);
             }
         })
 
+        if(checkSpecialChar(SalesFormObject[0].value)) {
+            setSalesError("Client Name Should Not Contain Special Characters");
+            fadeFormMessage();
+            return false;
+        }
+
+        if(checkSpecialChar(SalesFormObject[1].value)) {
+            setSalesError("Project Name Should Not Contain Special Characters");
+            fadeFormMessage();
+            return false;
+        }
+
         if(missingFields.length <= 0){
             createSales(token,user.id, SalesFormObject).then(response => {
-                console.log(response.status)
                 if(response.status === 201){
                     setSubmitSuccess(true);
                     setSubmitMessage("Successfully Created a Sales Opportunity... Redirecting Soon...");
 
                 }
                 else{
-                    setSubmitError(true);
-                    setSubmitMessage("Failed to Create the Sales Opportunity... If this issue persists, please contact your system admin.");
+                    setSalesError("Failed to Create the Sales Opportunity... If this issue persists, please contact your system admin.")
                 }
 
-                sleep(2000).then( res => {
-                    setLoading(false);
-                    setSubmitMessage("Please Wait... Creating Sales Opportunity...");
-                    getAll();
-                    homeView();
-                    window.open('localexplorer:'+user.base_url+response.data['salesFilePath']);
-                });
-
+                fadeFormMessage();
+                getAll();
+                homeView();
+                window.open('localexplorer:'+user.base_url+response.data['salesFilePath']);
             });
         }
-        else{
-            setSubmitError(true);
-            setSubmitMessage("Please enter all fields to create a sales opportunity.");
 
-            sleep(2000).then( res => {
-                setLoading(false);
-                setSubmitMessage("Please Wait... Creating Sales Opportunity...");
-            });
+        else{
+            setSalesError("Please enter all fields to create a sales opportunity.");
+            fadeFormMessage();
         }
     }
 

@@ -42,7 +42,11 @@ const ConvertProject = ( { handleConvertClick, projectManagers, closeReassignWin
     if(needDate === true && projectType != 'Warranty'){
         setNeedDate(false);
     }
+    
 
+    function containsAnyLetter(str) {
+        return /[a-zA-Z]/.test(str);
+    }
 
 
     const checkFields = () => {
@@ -64,6 +68,15 @@ const ConvertProject = ( { handleConvertClick, projectManagers, closeReassignWin
             return false;
         }
 
+        if(projectOwner === ""){
+            setErrorReport("Please Select a Project Owner.", setReassignError, setReassignMessage, setReassignLoading);
+            return false;
+        }
+
+        if(containsAnyLetter(projectNumber)){
+            setErrorReport("Project Number Should Only Include Numbers.", setReassignError, setReassignMessage, setReassignLoading);
+            return false
+        }
 
         return true;
 

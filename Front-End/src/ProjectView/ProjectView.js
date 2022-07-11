@@ -324,17 +324,28 @@ const ProjectView = ({ activeUser, fontSize, textHeight, projectViewProject, pro
         }
     }
 
-    const checkCPFields = (convertCustomerNumber) => {
+    const checkCPFields = (convertProjectNumber, convertCustomerNumber) => {
         if(convertCustomerNumber == ""){
             setErrorReport("Invalid Input... Please check the fields and resubmit", setCPSubmitError, setCPSubmitMessage, setCPLoading);
             return false;
         }
+
+        if(!convertCustomerNumber.match(/^[0-9]+$/)){
+            setErrorReport("Customer Number Should Only Include Numbers.", setCPSubmitError, setCPSubmitMessage, setCPLoading);
+            return false;
+        }
+
+        if(!convertProjectNumber.match(/^[0-9]+$/)){
+            setErrorReport("Project Number Should Only Include Numbers.", setCPSubmitError, setCPSubmitMessage, setCPLoading);
+            return false;
+        }
+        
         return true;
     }
 
     const handleConvertClick = () => {
         setCPLoading(true);
-        if(checkCPFields(convertCustomerNumber)){
+        if(checkCPFields(convertProjectNumber,convertCustomerNumber)){
             checkProjectNumber(true, convertProjectNumber,convertCustomerNumber, projectType, activeUser.id, createDate(), setCPLoading, setCPSubmitMessage, setCPSubmitError, setCPSubmitSuccess);
         } 
     }
