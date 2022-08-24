@@ -1,7 +1,7 @@
 {
-  "name": "djreact",
-  "proxy": "http://localhost:8000",
-  "homepage": "/dist",
+  "name": "CornerstoneProjectSuite",
+  "proxy": "",
+  "homepage": "/static/",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

@@ -3,7 +3,7 @@ import {FaAngleDown, FaAngleUp} from "react-icons/fa";
 import { useState, useEffect } from 'react';
 import DropDownInput from './DropDownInput';
 
-const SearchBar = ({projectNumber, setProjectNumber, dropDownOptions, getAll}) => {
+const SearchBar = ({projectNumber, setProjectNumber, dropDownOptions, resetSearches}) => {
     const [droppedDown, setDroppedDown] = useState(false);
     const toggleDroppedDown = () => {
         setDroppedDown(!droppedDown);
@@ -11,7 +11,7 @@ const SearchBar = ({projectNumber, setProjectNumber, dropDownOptions, getAll}) =
 
     const getAllProjects = () => {
         toggleDroppedDown();
-        getAll();
+        resetSearches();
     }
 
     return (
@@ -39,7 +39,7 @@ const SearchBar = ({projectNumber, setProjectNumber, dropDownOptions, getAll}) =
                     {dropDownOptions.map((Option, key) => (
                         <DropDownInput className='Drop-Down-Input' key={key}  {...Option}/>
                     ))}
-                    <button className='Show-All-Button Drop-Down-Button' onClick={e => getAllProjects()}>Show All Projects</button>
+                    <button className='Show-All-Button Drop-Down-Button' onClick={e => getAllProjects()}>Show All</button>
                 </div>
 
             </>

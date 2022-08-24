@@ -29,3 +29,66 @@ July 08, 2022 - 09:59:51
 Django version 4.0.3, using settings 'config.settings'
 Starting development server at http://0.0.0.0:7000/
 Quit the server with CTRL-BREAK.
+C:\Software\CornerstoneSuite\LaunchScript\CDPLaunch.ps1 : File C:\Software\CornerstoneSuite\LaunchScript\CDPLaunch.ps1 
+cannot be loaded. The file C:\Software\CornerstoneSuite\LaunchScript\CDPLaunch.ps1 is not digitally signed. You cannot 
+run this script on the current system. For more information about running scripts and setting execution policy, see 
+about_Execution_Policies at https:/go.microsoft.com/fwlink/?LinkID=135170.
+At line:1 char:1
++ C:\Software\CornerstoneSuite\LaunchScript\CDPLaunch.ps1
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : SecurityError: (:) [], PSSecurityException
+    + FullyQualifiedErrorId : UnauthorizedAccess
+C:\Software\CornerstoneSuite\LaunchScript\CDPLaunch.ps1 : File C:\Software\CornerstoneSuite\LaunchScript\CDPLaunch.ps1 
+cannot be loaded. The file C:\Software\CornerstoneSuite\LaunchScript\CDPLaunch.ps1 is not digitally signed. You cannot 
+run this script on the current system. For more information about running scripts and setting execution policy, see 
+about_Execution_Policies at https:/go.microsoft.com/fwlink/?LinkID=135170.
+At line:1 char:1
++ C:\Software\CornerstoneSuite\LaunchScript\CDPLaunch.ps1
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : SecurityError: (:) [], PSSecurityException
+    + FullyQualifiedErrorId : UnauthorizedAccess
+C:\Software\CornerstoneSuite\LaunchScript\CDPLaunch.ps1 : File C:\Software\CornerstoneSuite\LaunchScript\CDPLaunch.ps1 
+cannot be loaded. The file C:\Software\CornerstoneSuite\LaunchScript\CDPLaunch.ps1 is not digitally signed. You cannot 
+run this script on the current system. For more information about running scripts and setting execution policy, see 
+about_Execution_Policies at https:/go.microsoft.com/fwlink/?LinkID=135170.
+At line:1 char:1
++ C:\Software\CornerstoneSuite\LaunchScript\CDPLaunch.ps1
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : SecurityError: (:) [], PSSecurityException
+    + FullyQualifiedErrorId : UnauthorizedAccess
+C:\Software\CornerstoneSuite\LaunchScript\CDPLaunch.ps1 : File C:\Software\CornerstoneSuite\LaunchScript\CDPLaunch.ps1 
+cannot be loaded. The file C:\Software\CornerstoneSuite\LaunchScript\CDPLaunch.ps1 is not digitally signed. You cannot 
+run this script on the current system. For more information about running scripts and setting execution policy, see 
+about_Execution_Policies at https:/go.microsoft.com/fwlink/?LinkID=135170.
+At line:1 char:1
++ C:\Software\CornerstoneSuite\LaunchScript\CDPLaunch.ps1
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : SecurityError: (:) [], PSSecurityException
+    + FullyQualifiedErrorId : UnauthorizedAccess
+C:\Software\CornerstoneSuite\LaunchScript\CDPLaunch.ps1 : File C:\Software\CornerstoneSuite\LaunchScript\CDPLaunch.ps1 
+cannot be loaded. The file C:\Software\CornerstoneSuite\LaunchScript\CDPLaunch.ps1 is not digitally signed. You cannot 
+run this script on the current system. For more information about running scripts and setting execution policy, see 
+about_Execution_Policies at https:/go.microsoft.com/fwlink/?LinkID=135170.
+At line:1 char:1
++ C:\Software\CornerstoneSuite\LaunchScript\CDPLaunch.ps1
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : SecurityError: (:) [], PSSecurityException
+    + FullyQualifiedErrorId : UnauthorizedAccess
+C:\Software\CornerstoneSuite\LaunchScript\CDPLaunch.ps1 : File C:\Software\CornerstoneSuite\LaunchScript\CDPLaunch.ps1 
+cannot be loaded. The file C:\Software\CornerstoneSuite\LaunchScript\CDPLaunch.ps1 is not digitally signed. You cannot 
+run this script on the current system. For more information about running scripts and setting execution policy, see 
+about_Execution_Policies at https:/go.microsoft.com/fwlink/?LinkID=135170.
+At line:1 char:1
++ C:\Software\CornerstoneSuite\LaunchScript\CDPLaunch.ps1
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : SecurityError: (:) [], PSSecurityException
+    + FullyQualifiedErrorId : UnauthorizedAccess
+C:\Software\CornerstoneSuite\LaunchScript\CDPLaunch.ps1 : File C:\Software\CornerstoneSuite\LaunchScript\CDPLaunch.ps1 
+cannot be loaded. The file C:\Software\CornerstoneSuite\LaunchScript\CDPLaunch.ps1 is not digitally signed. You cannot 
+run this script on the current system. For more information about running scripts and setting execution policy, see 
+about_Execution_Policies at https:/go.microsoft.com/fwlink/?LinkID=135170.
+At line:1 char:1
++ C:\Software\CornerstoneSuite\LaunchScript\CDPLaunch.ps1
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : SecurityError: (:) [], PSSecurityException
+    + FullyQualifiedErrorId : UnauthorizedAccess

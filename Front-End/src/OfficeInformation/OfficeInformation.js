@@ -28,6 +28,9 @@ const OfficeInformation = ( { header, address, internetUsername, internetPasswor
                         <img src={wifiPicture} className="Wifi-Stamp" alt="Cornerstone Wifi" />
                     </div>
 
+                    <a href='http://root:pass@172.18.50.215/view/viewer_index.shtml?id=31'>Front Door Camera</a>
+                    <a href='http://172.18.50.225/www/index.html'>Back Door Camera</a>
+
                 </div>
 
                 <div className='OI-Small-Container'>
@@ -43,6 +46,7 @@ const OfficeInformation = ( { header, address, internetUsername, internetPasswor
             </div>
 
             </div>
+            
         </div>
     )
 }

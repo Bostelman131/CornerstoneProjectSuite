@@ -143,9 +143,13 @@ div {
 
 .PV-Archived-Container {
   width: 100%;
+
   display: flex;
   flex-direction: column;
   text-align: start;
+
+  align-items: start;
+
 }
 
 .PV-Archived-Checkbox {
@@ -271,6 +275,8 @@ div {
   margin-top: 30px;
   display: flex;
   flex-direction: column;
+
+  align-items: start;
 }
 
 .PVS-Text-Primary {
@@ -400,4 +406,12 @@ div {
 .PV-Convert-Button:hover {
   background-color: #45796d;
   cursor: pointer;
+}
+
+.PV-Warranty-Window {
+  margin-top: 30px;
+}
+
+.PV-Warranty-Form {
+  height: 350px;
 }

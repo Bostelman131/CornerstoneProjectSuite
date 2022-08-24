@@ -3,7 +3,7 @@ from django.urls import path
 from .views import ProjectApiView, ProjectArchivedApiView, DetailProject, ProjectView, CreateProject
 from .views import pinProject, CheckPinnedView, PinnedProjectView, PinnedSalesView, FilteredPinnedProjectView
 from .views import DetailAccount,ChangePassword,UploadView
-from .views import SalesApiView,DetailSale,PostSalesOpp, SalesView
+from .views import SalesApiView,DetailSale,PostSalesOpp, SalesView, SalesArchivedApiView
 from .views import login, signup
 from .views import linkList, UniqueProjectNumber,getProjectManagers,getSalesmen,UpdateBatch,getAssignedProjects, assignNotification, CheckAssignedSale
 
@@ -26,6 +26,7 @@ urlpatterns = [
     path('profilePicture/<pk>/', UploadView.as_view(), name="upload_profile_picture"),
 
     path("sales/", SalesApiView.as_view(), name="sales"),
+    path("sales/archived/", SalesArchivedApiView.as_view(), name="archived_sales"),
     path("sales/filter/", DetailSale.as_view(), name="sales_filter"),
     path("sales/post/", PostSalesOpp.as_view(), name="sales_post"),
     path("sales/<pk>/", SalesView.as_view(), name="sales_detail"),

@@ -1,0 +1,41 @@
+.App-Header-Toggle-Container {
+    height: 40%;
+    width: 180px;
+    margin-right: 25px;
+
+    border: 1px solid #32584F;
+    border-radius: 30px;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+
+    padding: 2px;
+    box-shadow: #32584F;
+}
+
+.App-Header-Toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 50%;
+    height: 98%;
+
+    font-size: 1.1em;
+}
+
+.App-Header-Toggle:hover {
+    cursor: pointer;
+}
+
+.AHT-Selected {
+    background-color: #32584F;
+    border-radius: 40px;
+    color: white;
+}
+
+.AHT-Unselected {
+    color: #32584F;
+}

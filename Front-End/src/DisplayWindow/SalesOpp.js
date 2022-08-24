@@ -77,21 +77,28 @@ function SalesOpp({SalesFormObject, user, salesFormTextHeight, salesFormTextArea
         }
 
         if(missingFields.length <= 0){
-            createSales(token,user.id, SalesFormObject).then(response => {
-                if(response.status === 201){
-                    setSubmitSuccess(true);
-                    setSubmitMessage("Successfully Created a Sales Opportunity... Redirecting Soon...");
-
-                }
-                else{
-                    setSalesError("Failed to Create the Sales Opportunity... If this issue persists, please contact your system admin.")
-                }
-
+            try{
+                console.log("SENDING SALES!")
+                createSales(token,user.id, SalesFormObject).then(response => {
+                    if(response.status === 201){
+                        setSubmitSuccess(true);
+                        setSubmitMessage("Successfully Created a Sales Opportunity... Redirecting Soon...");
+                    }
+                    else{
+                        setSalesError("Failed to Create the Sales Opportunity... If this issue persists, please contact your system admin.");
+                    }
+                    
+                    fadeFormMessage();
+                    getAll();
+                    homeView();
+                    window.open('localexplorer:'+user.base_url+response.data['salesFilePath']);
+                });
+            }
+            catch{
+                setSalesError("Failed to Create the Sales Opportunity... If this issue persists, please contact your system admin.");
                 fadeFormMessage();
-                getAll();
-                homeView();
-                window.open('localexplorer:'+user.base_url+response.data['salesFilePath']);
-            });
+            }
+
         }
 
         else{

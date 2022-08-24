@@ -84,7 +84,7 @@ function App() {
 
         setLoginError('');
 
-        getAll();
+        handleProjectViewRender();
 
         setActiveUserData(response.data.id);
 
@@ -121,6 +121,28 @@ function App() {
 
   let [ selectedNav , setSelectedNav ] = useState('Dashboard'); // KEEPS TRACK OF SELECTED NAV LINK
   const handleNavClick = (title) => {setSelectedNav(title);} // CHANGES SELECTED NAV LINK
+
+  const [ toggleSelection, setToggleSelection ] = useState('Projects');
+
+  useEffect(() => {
+    switch(selectedNav){
+
+      case 'Archived Projects':
+        setSelectedNav('Archived Sales');
+        break;
+
+      case 'Archived Sales':
+        setSelectedNav('Archived Projects');
+        break;
+
+      case 'Create Sales Opportunity':
+        setSelectedNav('Dashboard');
+        break;
+
+      default:
+        handleProjectViewRender();
+    }    
+  },[toggleSelection])
   
   const [ searchTerms, setSearchTerms ] = useState(false);
 
@@ -134,14 +156,21 @@ function App() {
   const [salesStatus, setSalesStatus] = useState("");
 
   const resetSearches = () => { // SETS ALL SEARCH FIELDS TO ""
-    setProjectNumber("");
-    setClientName("");
-    setCustomerNumber("");
-    setCustYear("");
-    setManagedBy("");
-    setProjectState("");
-    setProjectType("");
-    setSalesStatus("");
+    if(checkSearches()){
+      setProjectNumber("");
+      setClientName("");
+      setCustomerNumber("");
+      setCustYear("");
+      setManagedBy("");
+      setProjectState("");
+      setProjectType("");
+      setSalesStatus("");
+    }
+    else{
+      handleProjectViewRender();
+    }
+
+    setSearchTerms(false)
   }
   
   const dropDownOptions = [ // DATA FOR DROP DOWN MENU ON HEADER
@@ -151,30 +180,73 @@ function App() {
     {Label:"Year", currentText:custYear, SearchBarText:"Enter a year...", filterFunction:setCustYear},
     {Label:"State", currentText:projectState, SearchBarText:"Enter a state abbreviation...", filterFunction:setProjectState},
     {Label:"Managed By", currentText:managedBy, SearchBarText:"Enter an employee's name...", filterFunction:setManagedBy},
-    {Label:"Project Type", currentText:projectType, SearchBarText:"Enter a project Type...", filterFunction:setProjectType, select:true, options:["","Project","Maintenance","Warranty"]},
-    {Label:"Sales Status", currentText:salesStatus, SearchBarText:"Enter a sales status...", filterFunction:setSalesStatus, select:true, options:["","Sent","Not Sent"]},
   ]
+
+  if(toggleSelection === 'Projects') dropDownOptions.push({Label:"Project Type", currentText:projectType, SearchBarText:"Enter a project Type...", filterFunction:setProjectType, select:true, options:["","Project","Maintenance","Warranty"]})
+  if(toggleSelection === 'Sales') dropDownOptions.push({Label:"Sales Status", currentText:salesStatus, SearchBarText:"Enter a sales status...", filterFunction:setSalesStatus, select:true, options:["","Sent","Not Sent"]})
 
   const homeView = () => {  // TAKES USER BACK TO HOME / DASHBOARD
     setSelectedNav('Dashboard');
   }
 
-  useEffect (()=> {   // IF SELECTED NAV CHANGES, CHECK TO DETERMINE WHAT NAV IS SELECTED AND UPDATE ACCORDINGLY. 'DASHBOARD' & 'ARCHIVED PROJECTS' HANDLED IN GETALL() 
-    if(selectedNav === 'Pinned Projects'){
-      resetSearches();
-      getPinnedProjects();
-      getPinnedSales();
-    }
-    else{
-      getAll();
-    }
+  const handleProjectViewRender = () => {
 
+    const searchObject = createSearchObject();
+    const project = toggleSelection === 'Projects';
+
+    switch(selectedNav){
+
+      case 'Dashboard':
+        searchObject["archived"] = false;
+        if(project){
+          getFilteredProject(searchObject);
+          setSales([]);
+        }
+        else{
+          setProjects([]);
+          getFilteredSales(searchObject);
+        }
+        break;
+
+      case 'Pinned Projects':
+        getPinnedProjects();
+        getPinnedSales();
+        break;
+
+        case 'Archived Projects':
+        searchObject["archived"] = true;
+        try{
+          getFilteredProject(searchObject);
+          setSales([]);
+        }
+        catch{
+          console.log("Error Occurred Searching Archived Projects")
+        }
+        break;
+
+      case 'Archived Sales':
+        searchObject["archived"] = true;
+        try{
+          setProjects([]);
+          getFilteredSales(searchObject);
+        }
+        catch{
+          console.log("Error Occurred Searching Archived Projects")
+        }
+        break;
+
+    }
+  }
+
+  useEffect (()=> {   // IF SELECTED NAV CHANGES, CHECK TO DETERMINE WHAT NAV IS SELECTED AND UPDATE ACCORDINGLY. 'DASHBOARD' & 'ARCHIVED PROJECTS' HANDLED IN GETALL() 
+    handleProjectViewRender();
   }, [selectedNav])
 
 
 
 // PROJECTS - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   
+
   const [ results, setResults ] = useState([])  // COMBINATION OF SALES AND PROJECTS TO DISPLAY IN DASHBOARD
   const [ projects, setProjects] = useState([]); // STORES ALL PROJECTS
   const [ sales, setSales ] = useState([]);   // STORES ALL SALES
@@ -182,93 +254,34 @@ function App() {
   const [  projectViewProject, setProjectViewProject ] = useState({});  // STORES PROJECT OBJECT WHEN A TILE IS CLICKED ON
   const [  projectViewSale, setProjectViewSale ] = useState({});  // STORES SALES OBJECT WHEN A TILE IS CLICKED ON
 
+
   const checkSearches = () => { // CHECKS TO DETERMINE IF ANY SEARCHES HAVE BEEN MADE - TRUE IF SO - FALSE IF NOT
-    let searches = false;
-
-    if(projectNumber != ""){
-      searches = true;
+    if(projectNumber !== ""){
+      return true;
     }
-    if(clientName != ""){
-      searches = true;
+    if(clientName !== ""){
+      return true;
     }
-    if(customerNumber != ""){
-      searches = true;
+    if(customerNumber !== ""){
+      return true;
     }
-    if(custYear != ""){
-      searches = true;
+    if(custYear !== ""){
+      return true;
     }
-    if(managedBy != ""){
-      searches = true;
+    if(managedBy !== ""){
+      return true;
     }
-    if(projectState != ""){
-      searches = true;
+    if(projectState !== ""){
+      return true;
     }
-    if(projectType != ""){
-      searches = true;
+    if(projectType !== ""){
+      return true;
     }
-    if(salesStatus != ""){
-      searches = true;
+    if(salesStatus !== ""){
+      return true;
     }
 
-    return searches
-  }
-
-  function getAll() {   // CHECK FOR SEARCHES - IF TRUE - RESET SEARCHES FETCHES PROJECTS  - FALSE - CALL TO GET THEM
-    setSearchTerms(false);
-    if(checkSearches()){  
-      setProjects([]);
-      resetSearches();
-    }
-    else{  
-      try{
-        if(selectedNav === 'Dashboard'){
-          getAllProjects();
-          getAllSales();
-        }
-        else if(selectedNav === 'Archived Projects'){
-          getAllArchivedProjects();
-          setSales([]);
-        }
-        else if(selectedNav === 'Pinned Projects'){
-          resetSearches();
-          getPinnedProjects();
-          getPinnedSales();
-        }
-      }
-      catch{
-        console.log("Error getting all projects")
-      }
-    }
-  }
-
-  async function getAllProjects(){  // CALLS API TO GET ALL PROJECTS
-    projectDataService.getAllProjects(apiToken)
-    .then(response =>{
-      setProjects(response.data);
-    })
-    .catch( e => {
-      console.log(e);
-    })
-  }
-
-  async function getAllArchivedProjects(){  // CALLS API TO GET ALL PROJECTS
-    projectDataService.getAllArchivedProjects(apiToken)
-    .then(response =>{
-      setProjects(response.data);
-    })
-    .catch( e => {
-      console.log(e);
-    })
-  }
-
-  async function getAllSales(){   // CALLS API TO GET ALL SALES OPPS
-    projectDataService.getAllSales(apiToken)
-      .then(response =>{
-        setSales(response.data);
-      })
-      .catch( e => {
-        console.log(e);
-      })
+    return false;
   }
 
   async function getFilteredProject(searchObject) { // CALLS API TO GET FILTERED PROJECTS
@@ -294,15 +307,15 @@ function App() {
   function getMyProjects() { // GET ALL PROJECTS OR SALES ASSIGNED TO ACTIVE USER
     setSearchTerms(true);
     homeView();
-    resetSearches();
-    setProjects([]);
 
     const searchObject = {
       "id" : activeUser.id,
+      "archived": false,
     }
 
     getFilteredProject(searchObject);
     getFilteredSales(searchObject);
+
   }
 
   function getWatchlistProjects() {  // GET ALL PROJECTS ASSIGNED TO WATCHLIST
@@ -363,7 +376,7 @@ function App() {
     setResults(tempArray);
   }
 
-  useEffect (() => {  // FILTER PROJECTS BASED ON SEARCH TERMS - UPDATES ON INPUT CHANGE TO SEARCH FIELDS LISTED
+  const createSearchObject = () => {
     const searchObject = {
       "projectNumber": projectNumber,
       "clientName":clientName,
@@ -374,44 +387,14 @@ function App() {
       "projectType":projectType,
       "salesStatus":salesStatus,
     }
+    return searchObject;
+  }
 
-    if(selectedNav === 'Dashboard'){
-      setResults([]);
-      setSearchTerms(checkSearches());
+  useEffect (() => {  // FILTER PROJECTS BASED ON SEARCH TERMS - UPDATES ON INPUT CHANGE TO SEARCH FIELDS LISTED
+    if(checkSearches()) setSearchTerms(true);
+    else setSearchTerms(false);
 
-      searchObject["archived"] = false;
-      try{
-        getFilteredProject(searchObject);
-        getFilteredSales(searchObject);
-       }
-      catch{
-        console.log("Error Occurred Searching Projects")
-      }
-    }
-    
-    if(selectedNav === 'Archived Projects'){
-      setResults([]);
-      setSearchTerms(checkSearches());
-
-      searchObject["archived"] = true;
-      try{
-        getFilteredProject(searchObject);
-        setSales([]);
-       }
-      catch{
-        console.log("Error Occurred Searching Archived Projects")
-      }
-    }
-
-    if(selectedNav === 'Pinned Porjects'){
-      try{
-        console.log("Searching Pinned Projects comming soon!")
-       }
-      catch{
-        console.log("Error Occurred Searching Pinned Projects")
-      }
-    }
-
+    handleProjectViewRender();
   }, [projectNumber, clientName, customerNumber, custYear, managedBy, projectState, projectType, salesStatus])
 
   useEffect (() => {  // COMBINES SALES AND PROJECTS WHENEVER ONE CHANGES
@@ -444,14 +427,9 @@ const pinProject = async ( projectNumber, setMessage, setError, setSuccess, setL
   projectDataService.pinProject(apiToken, activeUser.id, projectNumber,pinnedProject)
   .then((response) => {
 
-    if(response.status === 201){
+    if(response.status === 201 || response.status === 200){
       setMessage("Project Successfully Pinned");
       setSuccess(true);
-    }
-
-    else if(response.status === 200){
-      setMessage("Project Successfully Un-Pinned");
-      setSuccess(true)
     }
 
     else{
@@ -461,7 +439,7 @@ const pinProject = async ( projectNumber, setMessage, setError, setSuccess, setL
 
     checkPinnedProject(projectNumber);
     if(selectedNav === 'Pinned Projects'){
-      getAll();
+      handleProjectViewRender();
     }
 
 
@@ -474,7 +452,6 @@ const pinProject = async ( projectNumber, setMessage, setError, setSuccess, setL
 
   })
 }
-
 
 
 // ASSIGNED SALE - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -551,6 +528,7 @@ const checkAssignedSale = async ( projectNumber ) => {
       'projectZip': projectViewSale['projectZip'],
       'salesFilePath': projectViewSale['file_path'],
       'submitted': projectViewSale['submitted'],
+      'archived': projectViewProject['archived'],
     }
 
     if(sale){
@@ -567,32 +545,34 @@ const checkAssignedSale = async ( projectNumber ) => {
   }
 
   const handlePVSubmit = async (setPVSubmitMessage,setPVLoading,setPVError,setPVSuccess,selectedProjectManager) => {  // HANDLES CHANGES MADE IN PROJECT VIEW
-    if(projectViewProject['projectNumber'][0].toLowerCase() != 's'){
+    setPVError(false);
 
-      if(pvProjectNumber != projectViewProject['projectNumber']){
+    if(projectViewProject['projectNumber'][0].toLowerCase() !== 's'){
 
+      if(pvProjectNumber !== projectViewProject['projectNumber']){
         projectDataService.isProjectNumberUnique(apiToken,projectViewProject['projectNumber']).then(res => {
           const unique = res.data['unique'];
-          if(unique == false){
+          if(unique === false){
             setPVError(true);
             setPVSubmitMessage("Update Failure: Please Enter a Unique Project Number...");
           }
           else{
-            setPVError(false);
-            setPVSubmitMessage("Please Wait... Updating Project Number...");
+            setPVError(true);
+            setPVSubmitMessage("Project Numbers cannot be changed by users. Contact a system administrator.");
           }
         })
       }
+
       setPVSubmitMessage("Please Wait... Updating Project Information...");
 
       const newProjectObject = getNewProjectObject(selectedProjectManager)
       const newSaleObject = getNewSaleObject()
-
-      projectDataService.updateProject(pvProjectNumber, newProjectObject, newSaleObject, apiToken).then(res => {
+      projectDataService.updateProject(pvProjectNumber, newProjectObject, newSaleObject, activeUser, apiToken).then(res => {
         if(res.status == 200){
           setPVError(false);
           setPVSuccess(true);
           setPVSubmitMessage("Project Updated Successfully...");
+          handleProjectViewRender();
   
           sleep(1500).then( res => {
             setPVLoading(false);
@@ -610,7 +590,11 @@ const checkAssignedSale = async ( projectNumber ) => {
             setPVSubmitMessage("Please Wait... Loading...");
           })
         }
+      }).catch( error => {
+        setPVError(true);
+        setPVSubmitMessage("Update Failure: Unable to change this project at this time, try again later. If this problem persists please contact your administrator. " + error);
       })
+
     }
 
 
@@ -638,6 +622,7 @@ const checkAssignedSale = async ( projectNumber ) => {
             setPVError(false);
             setPVSuccess(true);
             setPVSubmitMessage("Project Updated Successfully...");
+            handleProjectViewRender();
     
             sleep(1500).then( res => {
               setPVLoading(false);
@@ -694,11 +679,11 @@ const checkAssignedSale = async ( projectNumber ) => {
               const newFilePath = response.data
               window.open('localexplorer:'+activeUser.base_url+newFilePath['newFilePath']);
               setProjectView(false);
-              getAll();
+              handleProjectViewRender();
             })
           }
           else{
-            getAll();
+            handleProjectViewRender();
             closeReassignWindow();
           }
 
@@ -781,7 +766,6 @@ const checkAssignedSale = async ( projectNumber ) => {
   const assignSales = async (cancelAssign, salesNumber, userId, assignedUserId, setLoading, setMessage, setError, setSuccess) => {
     userDataService.sendNotification(apiToken, salesNumber, userId, assignedUserId)
     .then(response => {
-      console.log(response.status)
       if(response.status === 200){
         setSuccess(true);
         setMessage("Email Notification successfully sent.");
@@ -964,7 +948,6 @@ const checkAssignedSale = async ( projectNumber ) => {
     setActiveUserData:setActiveUserData,
   }
 
-  
 
 // SEARCH BAR - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -972,8 +955,7 @@ const checkAssignedSale = async ( projectNumber ) => {
     projectNumber, projectNumber,
     setProjectNumber:setProjectNumber,
     dropDownOptions:dropDownOptions,
-    getAll:getAll,
-
+    resetSearches:resetSearches,
   }
 
 
@@ -986,7 +968,9 @@ const checkAssignedSale = async ( projectNumber ) => {
     maxHeight: 55,
     toggleUserMenu : toggleUserMenu,
     searchTerms: searchTerms,
-    getAll: getAll,
+    resetSearches: resetSearches,
+    toggleSelection:toggleSelection,
+    setToggleSelection:setToggleSelection,
   }
 
 
@@ -1163,7 +1147,7 @@ const checkAssignedSale = async ( projectNumber ) => {
     salesDirections:salesDirections,
     token: apiToken,
     createSales: projectDataService.createSales,
-    getAll:getAll,
+    getAll:handleProjectViewRender,
   }
 
   
@@ -1266,7 +1250,7 @@ const checkAssignedSale = async ( projectNumber ) => {
    createUserTextHeight: createUserTextHeight,
    token: apiToken,
    homeView:homeView,
-   getAll:getAll,
+   getAll:handleProjectViewRender,
    createUserDirections:createUserDirections,
    createUser: userDataService.createUser,
 
@@ -1308,16 +1292,17 @@ const checkAssignedSale = async ( projectNumber ) => {
     const NavLinkList = [ // ICONS AND TITLES FOR NAVBAR LINKS (SECONDARY)
       {DashIcon: FaClipboardList,title: "Dashboard"},
       {DashIcon: FaMapPin,title: "Pinned Projects"},
-      {DashIcon: FaDownload,title: "Archived Projects"},
     ]
 
-    if(admin || salesman){  // SHOW 'CREATE SALES OPPORTUNITY' IF SALESMAN OR ADMIN
-      NavLinkList.push({DashIcon: FaCommentDollar,title: "Create Sales Opportunity"})
-    }
+    // SHOW ARCHIVED PROJECTS / SALES DEPENDING ON TOGGLE STATUS
+    if(toggleSelection === 'Projects') NavLinkList.push({DashIcon: FaDownload,title: "Archived Projects"})
+    if(toggleSelection === 'Sales') NavLinkList.push({DashIcon: FaDownload,title: "Archived Sales"})
 
-    if(admin){  // SHOW 'CREATE USER' IF SALESMAN OR ADMIN
-      NavLinkList.push({DashIcon: FaCaretSquareRight,title: "Create A User"})
-    }
+    // SHOW 'CREATE SALES OPPORTUNITY' IF SALESMAN OR ADMIN & SALES TOGGLE IS SELECTED
+    if((admin || salesman) && toggleSelection === 'Sales') NavLinkList.push({DashIcon: FaCommentDollar,title: "Create Sales Opportunity"})
+
+    // SHOW 'CREATE USER' IF SALESMAN OR ADMIN
+    if(admin) NavLinkList.push({DashIcon: FaCaretSquareRight,title: "Create A User"})
 
     NavLinkList.push({DashIcon: FaFlipboard,title: "Office Information"})   // SHOW 'OFFICE INFORMATION' - LAST TO ORDER LIST PROPERLY
     NavLinkList.push({DashIcon: FaBezierCurve,title: "Network Diagnostics"})   // SHOW 'NETWORK DIAGNOSTICS' - LAST TO ORDER LIST PROPERLY

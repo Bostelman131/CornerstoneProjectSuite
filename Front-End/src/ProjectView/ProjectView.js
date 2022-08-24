@@ -42,7 +42,6 @@ const ProjectView = ({ activeUser, fontSize, textHeight, projectViewProject, pro
 
     const [  convertProjectNumber, setConvertProjectNumber ] = useState("");
     const [  convertCustomerNumber, setConvertCustomerNumber ] = useState("");
-    const [  convertProjectType, setConvertProjectType ] = useState("");
 
     const [ cpLoading, setCPLoading ] = useState(false);
     const [ cpSubmitMessage, setCPSubmitMessage ] = useState("Please Wait... Loading...");
@@ -56,7 +55,6 @@ const ProjectView = ({ activeUser, fontSize, textHeight, projectViewProject, pro
 
     const [ projectType, setProjectType ] = useState("Project")
     const [ archived, setArchived ] = useState(false);
-    const [ newlyArchived, setNewlyArchived ] = useState(false);
 
     const [ saleSubmitted, setSaleSubmitted ] = useState(false);
 
@@ -225,13 +223,46 @@ const ProjectView = ({ activeUser, fontSize, textHeight, projectViewProject, pro
     }
 
 
+
+    const checkforArchive = (projectViewObject) => {
+        if(projectViewObject.archived == true && archived == false){
+            setArchived(true);
+            projectViewProject.archived = true
+        }
+        if(projectViewObject.archived == false && archived == true){
+            setArchived(false);
+            projectViewProject.archived = false
+        }
+
+    }
+
+    const handleArchivedClick = () => {
+        if(projectViewProject.archived === false && projectOrNot){
+            setPVLoading(true);
+            setPVError(true);
+            setPVSubmitMessage("Ensure a warranty is created for this project using the warranty panel below.");
+        }
+
+        if(!projectOrNot) projectViewSale.archived = (!projectViewSale.archived)
+
+        projectViewProject.archived = (!projectViewProject.archived)
+        setArchived(projectViewProject.archived);
+    }
+
     const editClick = () => {
+        projectOrNot ?
+        checkforArchive(projectViewProject)
+        :
+        checkforArchive(projectViewSale)
+
+
+
         if(buttonText == "Submit"){
             setbuttonText("Edit");
             setEditable('false');
             setPVLoading(true);
 
-            handlePVSubmit(setPVSubmitMessage,setPVLoading,setPVError,setPVSuccess,selectedProjectManager).then()
+            handlePVSubmit(setPVSubmitMessage,setPVLoading,setPVError,setPVSuccess,selectedProjectManager)
         }
         else{
             setbuttonText("Submit");
@@ -273,7 +304,6 @@ const ProjectView = ({ activeUser, fontSize, textHeight, projectViewProject, pro
         setProjectView(false);
     }
 
-
     const sleep = ms => new Promise(r => setTimeout(r, ms));
 
     const setErrorReport = (message, setError, setMessage, setLoading) => {
@@ -309,7 +339,7 @@ const ProjectView = ({ activeUser, fontSize, textHeight, projectViewProject, pro
 
             isProjectNumberUnique(apiToken,newProjectNumber).then(response => {
                 if(response.data.unique == true){
-                        handleCPSubmit( redirect, newProjectNumber, customerNumber, type, owner, completeDate, setLoading, setMessage, setError, setSuccess, closeReassignWindow );
+                        handleCPSubmit( redirect, newProjectNumber, customerNumber, type, owner, completeDate, setLoading, setMessage, setError, setSuccess );
                 }
                 else{
                     setErrorReport("Invalid Project Number... Please enter a unique 7 digit project number.", setError, setMessage, setLoading);
@@ -352,39 +382,6 @@ const ProjectView = ({ activeUser, fontSize, textHeight, projectViewProject, pro
 
     const handleTypeChange = (selection) => {
         setProjectType(selection);
-    }
-
-    if(projectViewProject.archived == true && archived == false){
-        setArchived(true);
-    }
-    if(projectViewProject.archived == false && archived == true){
-        setArchived(false);
-    }
-
-    const handleArchivedClick = () => {
-        if(projectViewProject.archived === false){
-            setNewlyArchived(true);
-        }
-        projectViewProject.archived = (!projectViewProject.archived);
-        setArchived(projectViewProject.archived);
-    }
-
-    const closeReassignWindow = () => {
-        setNewlyArchived(false);
-    }
-
-    const handleReassignSubmit = () => {
-
-    }
-
-    const convertProjectProps = {
-        handleReassignSubmit:handleReassignSubmit,
-        projectManagers:projectManagers,
-        closeReassignWindow:closeReassignWindow,
-        checkProjectNumber:checkProjectNumber,
-        setErrorReport:setErrorReport,
-        convertCustomerNumber:convertCustomerNumber,
-        createDate:createDate,
     }
 
     const handleSentClick = () => {
@@ -469,9 +466,6 @@ const ProjectView = ({ activeUser, fontSize, textHeight, projectViewProject, pro
                     {   editable =='false' &&
                         <UserPanel user={projectOwner} maxHeight={80}/>
                     }
-                    {/* {   editable =='true' && !activeUser.is_admin &&
-                        <UserPanel user={projectOwner} maxHeight={80}/>
-                    } */}
                     {   editable =='true'  && 
                         <DropDownSelector defaultValue={projectViewProject.owner_id} providedArray={projectManagers} setSelectionFunction={setSelectedProjectManager} />
                     }
@@ -540,7 +534,7 @@ const ProjectView = ({ activeUser, fontSize, textHeight, projectViewProject, pro
                                         {   assignedSale && 
                                                 assignedSaleList.map((assignedObject, key) => {
                                                     return(
-                                                        <label className='PVS-Text-Primary'>Submitted to {assignedObject.first_name} {assignedObject.last_name} on {convertDate(assignedObject.assignedDate)}</label>
+                                                        <label key={key} className='PVS-Text-Primary'>Submitted to {assignedObject.first_name} {assignedObject.last_name} on {convertDate(assignedObject.assignedDate)}</label>
                                                     )
                                                 })
                                             
@@ -561,12 +555,10 @@ const ProjectView = ({ activeUser, fontSize, textHeight, projectViewProject, pro
 
 
                         <div className='PV-Link-Container'>
-                                {   editable =='true'  && projectOrNot &&
+                                {   editable =='true'  &&
                                     <div className='PV-Archived-Container'>
                                         <label className='Checkbox-Label'>Archived</label>
                                         <input type="checkbox" className='PV-Archived-Checkbox' checked={archived} onChange={e => handleArchivedClick()}/>
-
-                                        {/* <input defaultValue={projectViewProject['file_path']} className='PV-Archived-Path' onChange={e => projectViewProject['file_path'] = e.target.value}/> */}
                                     </div>
                                 }
                             <label className='PV-Link-Header'>Project Links</label>
@@ -587,7 +579,6 @@ const ProjectView = ({ activeUser, fontSize, textHeight, projectViewProject, pro
                     </div>
 
                     <div className='PV-Primary-Right-Window'>
-
                         <div className='PV-Narrative-Container'>
                             {   developmentProject &&
                                 <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfevIjFkxxyOCAeQLTaRaOk7V1VubYEZHqJSOcn0gLJfd7UvQ/viewform?embedded=true" width="100%" height="100%" frameBorder="0" marginHeight="0" marginWidth="0">Loading…</iframe>
@@ -620,10 +611,6 @@ const ProjectView = ({ activeUser, fontSize, textHeight, projectViewProject, pro
 
                     </div>
                 </div>
-
-                { newlyArchived &&
-                    <ConvertProject {...convertProjectProps}/>
-                }
 
                 { projectOrNot &&
                 <div className='PV-Sales-Window'>
@@ -729,11 +716,21 @@ const ProjectView = ({ activeUser, fontSize, textHeight, projectViewProject, pro
                                 <option value="Project">Project</option>
                                 <option value="Maintenance">Maintenance</option>
                             </select>
-                            {/* <input className='PV-Convert-Input' placeholder='Please Enter the Project Type...' onChange={e => {setConvertProjectType(e.target.value)}}/> */}
                             { cpLoading &&
                                 <label style={css} className='PV-Convert-Message'>{cpSubmitMessage}</label>
                             }
                             <button className='PV-Convert-Button' onClick={e => handleConvertClick()}>Submit</button>
+                        </div>
+                    </div>
+                }
+
+                { projectOrNot && 
+                    <div className='PV-Warranty-Window'>
+                        <div className='PV-Inner-Header'>
+                            <label className='PV-Header-Title'>Warranty</label>
+                        </div>
+                        <div className='PV-Warranty-Form'>
+                            <h1>Coming Soon!</h1>
                         </div>
                     </div>
                 }

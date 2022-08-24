@@ -43,6 +43,13 @@ function DisplayWindow( { navSelected, salesOppProps, createUserProps, networkPr
                     <Dashboard {...dashboardProps}/>
                 </div>
             );
+
+        case "Archived Sales":
+            return(
+                <div className='Display-Window'>
+                    <Dashboard {...dashboardProps}/>
+                </div>
+            );
         
         case "Network Diagnostics":
             return(

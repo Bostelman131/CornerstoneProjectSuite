@@ -1,4 +1,5 @@
 from email import message
+from msilib.schema import Error
 from pyexpat import model
 from django.http import JsonResponse
 from django.contrib.auth import authenticate
@@ -28,6 +29,8 @@ from apis.relocate import move_directory
 from apis.links import get_link_list
 
 server_root = "\\\\172.18.50.2\\sedata\\"
+log_file_location = 'c:\\CPSLog.txt'
+
 
 
 class ProjectApiView(generics.ListCreateAPIView):
@@ -37,6 +40,10 @@ class ProjectApiView(generics.ListCreateAPIView):
 class ProjectArchivedApiView(generics.ListCreateAPIView):
     queryset = Project.objects.filter(archived = True)
     serializer_class = ProjectSerializer
+
+class SalesArchivedApiView(generics.ListCreateAPIView):
+    queryset = SalesOpp.objects.filter(archived = True)
+    serializer_class = SalesSerializer
 
 class ProjectView(generics.RetrieveUpdateAPIView):
     queryset = Project.objects.all()
@@ -137,7 +144,7 @@ class DetailProject(generics.ListCreateAPIView):
 class SalesApiView(generics.ListAPIView):
     # permission_classes = [permissions.IsAuthenticated]
 
-    queryset = SalesOpp.objects.all()
+    queryset = SalesOpp.objects.filter(archived = False)
     serializer_class = SalesSerializer
 
 class SalesView(generics.RetrieveUpdateAPIView):
@@ -209,6 +216,15 @@ class DetailSale(generics.ListCreateAPIView):
             pass
 
         try:
+            archived = self.request.query_params.get('archived')
+            if(archived != None ):
+                projects = projects.filter(archived=True)
+            else:
+                projects = projects.filter(archived=False)
+        except:
+            pass
+
+        try:
             salesStatus = self.request.query_params.get('salesStatus')
             if(salesStatus == "Sent" ):
                 projects = projects.filter(submitted=True)
@@ -265,6 +281,19 @@ class PostSalesOpp(generics.CreateAPIView):
         request.data['salesFilePath'] = sales_filepath
 
         create(res_names, temp_filepath, new_filepath)
+
+        try:
+            modifiers_profile = Account.objects.get(id=request.data['owner'])
+            modifiers_name = (modifiers_profile.first_name + " " + modifiers_profile.last_name)
+
+            todays_date = date.today()
+            message = (modifiers_name + " Created "+ request.data['salesNumber'] + " on " + str(todays_date) + "\n")
+
+            logFile = open(log_file_location, "a")
+            logFile.write(message)
+
+        except Error:
+            print(Error)
 
         return self.create(request, *args, **kwargs)
 
@@ -402,6 +431,7 @@ class FilteredPinnedProjectView(generics.ListCreateAPIView):
         return projects
     
 
+
 # ALLOWS A USER TO BE CREATED
 @csrf_exempt
 def signup(request):
@@ -438,8 +468,6 @@ def signup(request):
             return JsonResponse({'token':str(token)}, status=201)
         except IntegrityError:
             return JsonResponse({ 'error' : 'An error occurred while saving the user'}, status=400)
-
-
 
 # ALLOWS A USER TO LOGIN
 @csrf_exempt
@@ -533,7 +561,6 @@ def UniqueProjectNumber(request, pk):
         except:
             return JsonResponse({'error': 'Could not establish if project number was unique.'}, status=500)
 
-
 @csrf_exempt
 def UpdateBatch(request, pk):
     try:
@@ -541,7 +568,6 @@ def UpdateBatch(request, pk):
             data = JSONParser().parse(request)
             sales_data = data['sales']
             project_data = data['projects']
-
 
             projectRecord = Project.objects.get(projectNumber=pk)
             saleRecord = SalesOpp.objects.get(salesNumber=sales_data['salesNumber'])
@@ -580,14 +606,26 @@ def UpdateBatch(request, pk):
                     setattr(saleRecord, 'submittedDate', todays_date)
 
             saleRecord.save()
+   
+        # try:
+        #     modifiers_id = data['user']
+        #     modifiers_profile = Account.objects.get(id=modifiers_id)
+        #     modifiers_name = (modifiers_profile.first_name + " " + modifiers_profile.last_name)
 
+        #     todays_date = date.today()
+        #     message = (modifiers_name + " Updated "+ pk + " on " + str(todays_date) + "\n")
 
+        #     logFile = open(log_file_location, "a")
+        #     logFile.write(message)
+
+        # except:
+        #     return JsonResponse({'message': 'Project has been updated, but failed to log record'}, status=500)
 
         return JsonResponse({'message': 'Project has been updated'}, status=200)
 
     except:
         return JsonResponse({'message': 'Could not update the record. Please contact and administrator'}, status=500)
-
+  
 @csrf_exempt
 def getAssignedProjects(request, pk):
     if(pk == None or pk == 'undefined'):
@@ -666,6 +704,18 @@ def CreateProject(request):
                 [owner], 
                 fail_silently=False,
             )
+
+        try:
+            modifiers_name = (creator.first_name + " " + creator.last_name)
+
+            todays_date = date.today()
+            message = (modifiers_name + " Created "+ data["projectNumber"] + " on " + str(todays_date) + "\n")
+
+            logFile = open(log_file_location, "a")
+            logFile.write(message)
+
+        except:
+            return JsonResponse({'message': 'Project has been updated, but failed to log record'}, status=500)
 
         return JsonResponse({'newFilePath': file_path}, status=200)
 

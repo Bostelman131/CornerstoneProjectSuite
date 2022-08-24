@@ -15,6 +15,11 @@ class projectDataService{
         return axios.get( `${API_URL}projects/archived/` );
     }
 
+    getAllArchivedSales(token){
+        axios.defaults.headers.common["Authorization"] = "token" + token;
+        return axios.get( `${API_URL}sales/archived/` );
+    }
+
     getFilterProjects(token, searchObject){
         let queryString = "?";
         const keyList = Object.keys(searchObject);
@@ -43,11 +48,11 @@ class projectDataService{
         return axios.post( `${API_URL}createProject/`, JSONProjectObject);
     }
 
-    updateProject(projectNumber, newProjectObject, newSaleObject, token){
-
+    updateProject(projectNumber, newProjectObject, newSaleObject, userInformation, token){
         const tempObject = {
             'projects':newProjectObject,
-            'sales':newSaleObject
+            'sales':newSaleObject,
+            'user':userInformation.id
         };
 
         const JSONProjectObject = JSON.stringify(tempObject);
@@ -138,8 +143,6 @@ class projectDataService{
         })
 
         salesPostObject["userId"] = userId
-
-
 
         return axios.post( `${API_URL}sales/post/`, salesPostObject);
     }
